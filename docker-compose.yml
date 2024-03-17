@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+
+  node:
+    container_name: node
+    image: node:21.7.1-alpine3.18
+    volumes:
+      - ./app:/app
+      - enrollment-demo-app_node-cache:/usr/local/share/.cache
+    working_dir: /app
+
+volumes:
+  enrollment-demo-app_node-cache:
+    external: true
