@@ -17,8 +17,8 @@ export default function App() {
             Configure
           </Typography>
           <Typography variant="body1" component="div" sx={{mt: 2}}>
-          <FieldConfiguration/>
-        </Typography>
+            <FieldConfiguration/>
+          </Typography>
         </CardContent>
 
       </Card>
