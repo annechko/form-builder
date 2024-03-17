@@ -27,8 +27,9 @@ export default function App() {
           <Typography variant="h4" component="div">
             Preview
           </Typography>
-          <Typography variant="body1" sx={{mt: 2}}>
+          <Typography variant="body1" component="div">
             <FieldView type={FieldType.textarea}/>
+            <FieldView type={FieldType.input}/>
           </Typography>
 
         </CardContent>
