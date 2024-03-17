@@ -28,7 +28,7 @@ export default function App() {
             Preview
           </Typography>
           <Typography variant="body1" component="div">
-            <FieldView type={FieldType.textarea}/>
+            <FieldView type={FieldType.textarea} label="Label"/>
             <FieldView type={FieldType.input}/>
           </Typography>
 

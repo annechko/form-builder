@@ -11,7 +11,8 @@ export enum FieldType {
 }
 
 export type FieldViewProps = {
-  type: FieldType
+  type: FieldType,
+  label?: string,
 };
 
 export function FieldConfiguration() {

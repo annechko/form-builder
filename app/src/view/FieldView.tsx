@@ -7,13 +7,13 @@ export function FieldView(options: FieldViewProps) {
   if (options.type === FieldType.input) {
     return <>
       <FormControl fullWidth margin="normal">
-        <TextField id="outlined-basic" label="Field name" variant="filled" size="small"/>
+        <TextField id="outlined-basic" label={options.label || "Field name"} variant="filled" size="small"/>
       </FormControl>
     </>
   } else if (options.type === FieldType.textarea) {
     return <>
       <FormControl fullWidth margin="normal">
-        <TextField id="outlined-basic" label="Field name" variant="filled" size="small"
+        <TextField id="outlined-basic" label={options.label || "Field name"} variant="filled" size="small"
           multiline rows={3}/>
       </FormControl>
     </>
