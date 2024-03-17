@@ -3,29 +3,9 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import styles from './App.module.css';
 import Typography from '@mui/material/Typography';
-import {FieldConfiguration} from "./configuration/FieldConfiguration";
+import {FieldConfiguration, FieldType} from "./configuration/FieldConfiguration";
+import {FieldView} from "./view/FieldView";
 
-enum FieldType {
-  input = "input",
-  textarea = "textarea",
-}
-
-type FieldViewProps = {
-  type: FieldType
-};
-
-function FieldView(options: FieldViewProps) {
-  if (options.type === FieldType.input) {
-    return <>
-      input
-    </>
-  } else if (options.type === FieldType.textarea) {
-    return <>
-      textarea
-    </>
-  }
-
-}
 
 export default function App() {
 
