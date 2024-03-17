@@ -7,9 +7,8 @@ services:
     image: node:21.7.1-alpine3.18
     volumes:
       - ./app:/app
-      - enrollment-demo-app_node-cache:/usr/local/share/.cache
+      - node-cache:/usr/local/share/.cache
     working_dir: /app
 
 volumes:
-  enrollment-demo-app_node-cache:
-    external: true
+  node-cache:
