@@ -3,12 +3,17 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import styles from './App.module.css';
 import Typography from '@mui/material/Typography';
-import {FieldConfiguration, FieldType} from "./configuration/FieldConfiguration";
+import {FieldConfiguration, FieldSettings, FieldType} from "./configuration/FieldConfiguration";
 import {FieldView} from "./view/FieldView";
 
 
 export default function App() {
-
+  const defaultSettings: FieldSettings[] = [{type: FieldType.textarea, label: 'Label'}]
+  const [fieldSettings, setFieldSettings] = React.useState<FieldSettings[]>(defaultSettings);
+  const onSettingsChanged = (newFieldSettings: FieldSettings) => {
+    const newSettings: FieldSettings[] = [newFieldSettings]
+    setFieldSettings(newSettings)
+  }
   return (
     <div className={styles.content}>
       <Card className={styles.card}>
@@ -17,8 +22,7 @@ export default function App() {
             Configure
           </Typography>
           <Typography variant="body1" component="div" sx={{mt: 2}}>
-            <FieldConfiguration/>
-            <FieldConfiguration settings={{type: FieldType.textarea, label: "Label"}}/>
+            <FieldConfiguration settings={fieldSettings[0]} onSettingsChanged={onSettingsChanged}/>
           </Typography>
         </CardContent>
 
@@ -29,8 +33,7 @@ export default function App() {
             Preview
           </Typography>
           <Typography variant="body1" component="div">
-            <FieldView settings={{type: FieldType.input}}/>
-            <FieldView settings={{type: FieldType.textarea, label: "Label"}}/>
+            <FieldView settings={fieldSettings[0]}/>
           </Typography>
 
         </CardContent>

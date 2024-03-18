@@ -15,23 +15,34 @@ export type FieldSettings = {
   label?: string,
 };
 export type FieldConfigurationProps = {
-  settings?: FieldSettings
+  settings?: FieldSettings,
+  onSettingsChanged?: (newSettings: FieldSettings) => void,
 };
 
 export function FieldConfiguration(configProps: FieldConfigurationProps) {
   const defaultSettings: FieldSettings = {type: FieldType.input, label: ''}
 
-  const [settings, setSettings] = React.useState<FieldSettings>(configProps.settings||defaultSettings);
+  const [settings, setSettings] = React.useState<FieldSettings>(configProps.settings || defaultSettings);
   const handleTypeChange = (event: SelectChangeEvent) => {
     const typeStr = event.target.value as keyof typeof FieldType;
-    const updated: FieldSettings = {type: FieldType[typeStr], label:settings.label}
+    const updated: FieldSettings = {type: FieldType[typeStr], label: settings.label}
     setSettings(updated)
+    if (configProps.onSettingsChanged) {
+      configProps.onSettingsChanged(updated)
+    }
+  };
+  const handleLabelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const updated: FieldSettings = {label: event.target.value, type: settings.type}
+    setSettings(updated)
+    if (configProps.onSettingsChanged) {
+      configProps.onSettingsChanged(updated)
+    }
   };
   return <>
     <FormControl sx={{mb: 2, minWidth: 120}} fullWidth size="small">
-    <TextField id="outlined-basic" label="Field name" variant="outlined" size="small" fullWidth
-      value={settings.label}
-    />
+      <TextField id="outlined-basic" label="Field name" variant="outlined" size="small" fullWidth
+        value={settings.label} onChange={handleLabelChange}
+      />
     </FormControl>
     <FormControl sx={{mb: 2, minWidth: 120}} fullWidth size="small">
       <InputLabel id="demo-simple-select-helper-label">Type</InputLabel>
