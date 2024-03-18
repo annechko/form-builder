@@ -18,6 +18,7 @@ export default function App() {
           </Typography>
           <Typography variant="body1" component="div" sx={{mt: 2}}>
             <FieldConfiguration/>
+            <FieldConfiguration settings={{type: FieldType.textarea, label: "Label"}}/>
           </Typography>
         </CardContent>
 
@@ -28,8 +29,8 @@ export default function App() {
             Preview
           </Typography>
           <Typography variant="body1" component="div">
-            <FieldView type={FieldType.textarea} label="Label"/>
-            <FieldView type={FieldType.input}/>
+            <FieldView settings={{type: FieldType.input}}/>
+            <FieldView settings={{type: FieldType.textarea, label: "Label"}}/>
           </Typography>
 
         </CardContent>

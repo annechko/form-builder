@@ -10,26 +10,35 @@ export enum FieldType {
   textarea = "textarea",
 }
 
-export type FieldViewProps = {
+export type FieldSettings = {
   type: FieldType,
   label?: string,
 };
+export type FieldConfigurationProps = {
+  settings?: FieldSettings
+};
 
-export function FieldConfiguration() {
-  const [type, setType] = React.useState<FieldType>(FieldType.input);
+export function FieldConfiguration(configProps: FieldConfigurationProps) {
+  const defaultSettings: FieldSettings = {type: FieldType.input, label: ''}
+
+  const [settings, setSettings] = React.useState<FieldSettings>(configProps.settings||defaultSettings);
   const handleTypeChange = (event: SelectChangeEvent) => {
     const typeStr = event.target.value as keyof typeof FieldType;
-    setType(FieldType[typeStr]);
+    const updated: FieldSettings = {type: FieldType[typeStr], label:settings.label}
+    setSettings(updated)
   };
   return <>
-
-    <TextField id="outlined-basic" label="Field name" variant="outlined" size="small" fullWidth/>
-    <FormControl sx={{mt: 2, minWidth: 120}} fullWidth size="small">
+    <FormControl sx={{mb: 2, minWidth: 120}} fullWidth size="small">
+    <TextField id="outlined-basic" label="Field name" variant="outlined" size="small" fullWidth
+      value={settings.label}
+    />
+    </FormControl>
+    <FormControl sx={{mb: 2, minWidth: 120}} fullWidth size="small">
       <InputLabel id="demo-simple-select-helper-label">Type</InputLabel>
       <Select
         labelId="demo-simple-select-helper-label"
         id="demo-simple-select-helper"
-        value={type}
+        value={settings.type}
         label="Type"
         onChange={handleTypeChange}
       >
