@@ -23,20 +23,18 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
   const defaultSettings: FieldSettings = {type: FieldType.input, label: ''}
 
   const [settings, setSettings] = React.useState<FieldSettings>(configProps.settings || defaultSettings);
+  const updateSettings = (newSettings: FieldSettings) => {
+    setSettings(newSettings)
+    if (configProps.onSettingsChanged) {
+      configProps.onSettingsChanged(newSettings)
+    }
+  }
   const handleTypeChange = (event: SelectChangeEvent) => {
     const typeStr = event.target.value as keyof typeof FieldType;
-    const updated: FieldSettings = {type: FieldType[typeStr], label: settings.label}
-    setSettings(updated)
-    if (configProps.onSettingsChanged) {
-      configProps.onSettingsChanged(updated)
-    }
+    updateSettings({type: FieldType[typeStr], label: settings.label})
   };
   const handleLabelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const updated: FieldSettings = {label: event.target.value, type: settings.type}
-    setSettings(updated)
-    if (configProps.onSettingsChanged) {
-      configProps.onSettingsChanged(updated)
-    }
+    updateSettings({type: settings.type, label: event.target.value})
   };
   return <>
     <FormControl sx={{mb: 2, minWidth: 120}} fullWidth size="small">
