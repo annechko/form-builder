@@ -12,21 +12,22 @@ export default function App() {
     {type: FieldType.textarea, label: 'Label'},
     {type: FieldType.textarea, label: 'Label'},
   ]
-  const [fieldSettings, setFieldSettings] = React.useState<FieldSettings[]>(defaultSettings);
+  const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettings[]>(defaultSettings);
 
   const onFieldSettingsChanged = (index: number) => {
     return (newFieldSettings: FieldSettings) => {
       const newSettings: FieldSettings[] = []
-      for (let i = 0; i < fieldSettings.length; i++) {
+      for (let i = 0; i < fieldsSettings.length; i++) {
         if (i === index) {
           newSettings[i] = newFieldSettings
         } else {
-          newSettings[i] = fieldSettings[i]
+          newSettings[i] = fieldsSettings[i]
         }
       }
-      setFieldSettings(newSettings)
+      setFieldsSettings(newSettings)
     }
   }
+  const fieldsCount: number = fieldsSettings.length
 
   return (
     <div className={styles.content}>
@@ -36,9 +37,13 @@ export default function App() {
             Configure
           </Typography>
           <Typography variant="body1" component="div" sx={{mt: 2}}>
-            <FieldConfiguration settings={fieldSettings[0]} onSettingsChanged={onFieldSettingsChanged(0)}/>
-            <Divider sx={{mb: 2}}/>
-            <FieldConfiguration settings={fieldSettings[1]} onSettingsChanged={onFieldSettingsChanged(1)}/>
+            {fieldsSettings.map((s: FieldSettings, i: number) => (
+              <div key={i}>
+                <FieldConfiguration settings={s} onSettingsChanged={onFieldSettingsChanged(i)}/>
+                {i < fieldsCount - 1 && <Divider sx={{mb: 2}}/>}
+              </div>
+            ))}
+
             <Button variant="contained">Add</Button>
           </Typography>
         </CardContent>
@@ -50,8 +55,9 @@ export default function App() {
             Preview
           </Typography>
           <Typography variant="body1" component="div">
-            <FieldView settings={fieldSettings[0]}/>
-            <FieldView settings={fieldSettings[1]}/>
+            {fieldsSettings.map((s: FieldSettings, i: number) => (
+              <FieldView key={i} settings={s}/>
+            ))}
           </Typography>
 
         </CardContent>
