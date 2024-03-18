@@ -20,7 +20,7 @@ export type FieldConfigurationProps = {
 };
 
 export function FieldConfiguration(configProps: FieldConfigurationProps) {
-  const defaultSettings: FieldSettings = {type: FieldType.input, label: ''}
+  const defaultSettings: FieldSettings = {type: FieldType.input}
 
   const [settings, setSettings] = React.useState<FieldSettings>(configProps.settings || defaultSettings);
   const updateSettings = (newSettings: FieldSettings) => {
@@ -39,7 +39,7 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
   return <div>
     <FormControl sx={{mb: 2, minWidth: 120}} fullWidth size="small">
       <TextField id="outlined-basic" label="Field name" variant="outlined" size="small" fullWidth
-        value={settings.label} onChange={handleLabelChange}
+        value={settings.label || ''} onChange={handleLabelChange}
       />
     </FormControl>
     <FormControl sx={{mb: 2, minWidth: 120}} fullWidth size="small">
