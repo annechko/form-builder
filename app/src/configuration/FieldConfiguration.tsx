@@ -36,7 +36,7 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
   const handleLabelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     updateSettings({type: settings.type, label: event.target.value})
   };
-  return <>
+  return <div>
     <FormControl sx={{mb: 2, minWidth: 120}} fullWidth size="small">
       <TextField id="outlined-basic" label="Field name" variant="outlined" size="small" fullWidth
         value={settings.label} onChange={handleLabelChange}
@@ -56,5 +56,5 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
       </Select>
     </FormControl>
 
-  </>
+  </div>
 }
