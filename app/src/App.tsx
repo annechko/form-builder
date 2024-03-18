@@ -10,10 +10,17 @@ import {Button, Divider} from "@mui/material";
 export default function App() {
   const defaultSettings: FieldSettings[] = [
     {type: FieldType.textarea, label: 'Label'},
-    {type: FieldType.textarea, label: 'Label'},
   ]
   const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettings[]>(defaultSettings);
 
+  const onAddField = (event: object) => {
+    const newSettings: FieldSettings[] = []
+    for (let i = 0; i < fieldsSettings.length; i++) {
+      newSettings[i] = fieldsSettings[i]
+    }
+    newSettings.push({type: FieldType.input, label: 'Label'})
+    setFieldsSettings(newSettings)
+  }
   const onFieldSettingsChanged = (index: number) => {
     return (newFieldSettings: FieldSettings) => {
       const newSettings: FieldSettings[] = []
@@ -44,7 +51,7 @@ export default function App() {
               </div>
             ))}
 
-            <Button variant="contained">Add</Button>
+            <Button variant="contained" onClick={onAddField}>Add</Button>
           </Typography>
         </CardContent>
 

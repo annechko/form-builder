@@ -10,17 +10,17 @@ export type FieldViewProps = {
 export function FieldView(viewProps: FieldViewProps) {
   const settings = viewProps.settings
   if (settings.type === FieldType.input) {
-    return <>
+    return <div>
       <FormControl fullWidth margin="normal">
         <TextField id="outlined-basic" label={settings.label || "Field name"} variant="filled" size="small"/>
       </FormControl>
-    </>
+    </div>
   } else if (settings.type === FieldType.textarea) {
-    return <>
+    return <div>
       <FormControl fullWidth margin="normal">
         <TextField id="outlined-basic" label={settings.label || "Field name"} variant="filled" size="small"
           multiline rows={3}/>
       </FormControl>
-    </>
+    </div>
   }
 }
