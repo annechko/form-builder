@@ -15,14 +15,18 @@ const options = [
 
 const ITEM_HEIGHT = 48;
 
-function LongMenu() {
+function LongMenu(props: { onDelete?: Function }) {
+  const {onDelete} = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl !== null);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
+    if (onDelete) {
+      onDelete()
+    }
   };
 
   return (
@@ -45,11 +49,13 @@ function LongMenu() {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        PaperProps={{
-          style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: '20ch',
-          },
+        slotProps={{
+          paper: {
+            style: {
+              maxHeight: ITEM_HEIGHT * 4.5,
+              width: '20ch',
+            },
+          }
         }}
       >
         {options.map((option) => (
@@ -76,6 +82,7 @@ export type FieldSettings = {
 export type FieldConfigurationProps = {
   settings?: FieldSettings,
   onSettingsChanged?: (newSettings: FieldSettings) => void,
+  onFieldDeleted?: () => void,
 };
 
 export function FieldConfiguration(configProps: FieldConfigurationProps) {
@@ -126,7 +133,7 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
         <FormControlLabel control={
           <Switch onChange={handleRequiredChange}/>} label="Required" sx={{m: 0}}/>
       </FormGroup>
-      <LongMenu/>
+      <LongMenu onDelete={configProps.onFieldDeleted}/>
     </Stack>
   </div>
 }

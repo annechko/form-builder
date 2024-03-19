@@ -33,9 +33,20 @@ export default function App() {
       const newSettings: FieldSettings[] = []
       for (let i = 0; i < fieldsSettings.length; i++) {
         if (i === index) {
-          newSettings[i] = newFieldSettings
+          newSettings.push(newFieldSettings)
         } else {
-          newSettings[i] = fieldsSettings[i]
+          newSettings.push(fieldsSettings[i])
+        }
+      }
+      setFieldsSettings(newSettings)
+    }
+  }
+  const onFieldDeleted = (index: number) => {
+    return () => {
+      const newSettings: FieldSettings[] = []
+      for (let i = 0; i < fieldsSettings.length; i++) {
+        if (i !== index) {
+          newSettings.push(fieldsSettings[i])
         }
       }
       setFieldsSettings(newSettings)
@@ -59,7 +70,9 @@ export default function App() {
                   p: 1,
                   border: debugMode ? '1px dashed ' + colors[i] : '1px dashed #ffffff00'
                 }}>
-                  <FieldConfiguration settings={s} onSettingsChanged={onFieldSettingsChanged(i)}/>
+                  <FieldConfiguration settings={s} onSettingsChanged={onFieldSettingsChanged(i)}
+                    onFieldDeleted={onFieldDeleted(i)}
+                  />
                 </Box>
                 {i < fieldsCount - 1 && <Divider sx={{mb: 2}}/>}
               </div>
