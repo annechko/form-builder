@@ -12,13 +12,15 @@ export function FieldView(viewProps: FieldViewProps) {
   if (settings.type === FieldType.input) {
     return <div>
       <FormControl fullWidth>
-        <TextField id="outlined-basic" label={settings.label} variant="filled" size="small"/>
+        <TextField id="outlined-basic" label={settings.label} variant="filled" size="small"
+          required={settings.isRequired === true}/>
       </FormControl>
     </div>
   } else if (settings.type === FieldType.textarea) {
     return <div>
       <FormControl fullWidth>
         <TextField id="outlined-basic" label={settings.label} variant="filled" size="small"
+          required={settings.isRequired === true}
           multiline rows={3}/>
       </FormControl>
     </div>

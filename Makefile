@@ -3,7 +3,7 @@ docker-down:
 docker-up:
 	docker-compose up -d --remove-orphans
 
-app-start:
+start:
 	docker-compose run --rm -p "3000:3000" node npm start
 
 app-build:
