@@ -84,17 +84,14 @@ function ViewTabs(tabsProps: TabsProps) {
   const [selectedTabIndex, setSelectedTabIndex] = React.useState(0);
   const [fieldValues, setFieldValues] = React.useState<string[]>([]);
   React.useEffect(() => {
-    setTableHeaders(tabsProps.fieldsSettings.map((s: FieldSettings) => s.label || ''))
-
+    setTableHeaders(['#', ...tabsProps.fieldsSettings.map((s: FieldSettings) => s.label || '')])
+    setTableRows([])
   }, [tabsProps.fieldsSettings])
   const [responsesCount, setResponsesCount] = React.useState<number>(0);
   const [tableHeaders, setTableHeaders] = React.useState<string[]>(
-    tabsProps.fieldsSettings.map((s: FieldSettings, i: number) => (s.label || '') + i));
-  let defaultRows = [[]]
-  // for (let i = 0; i < tabsProps.fieldsSettings.length; i++) {
-  //   defaultRows.push()
-  // }
-  const [tableRows, setTableRows] = React.useState<string[][]>(defaultRows);
+    tabsProps.fieldsSettings.map((s: FieldSettings, i: number) => (s.label || '') + i)
+  );
+  const [tableRows, setTableRows] = React.useState<string[][]>([]);
 
   const onTabSelected = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTabIndex(newValue);
@@ -103,7 +100,7 @@ function ViewTabs(tabsProps: TabsProps) {
     }
   };
   const onSubmitResponse = () => {
-    tableRows.push([...fieldValues])
+    tableRows.push([new Date().toLocaleString(), ...fieldValues])
     setTableRows([...tableRows])
     setFieldValues([])
     setResponsesCount(responsesCount + 1)
