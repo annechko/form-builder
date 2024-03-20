@@ -7,7 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import {FormControlLabel, FormGroup, Stack, Switch} from "@mui/material";
+import {Checkbox, FormControlLabel, Stack} from "@mui/material";
 
 const options = [
   'Delete',
@@ -129,10 +129,9 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
       </FormControl>
     </Stack>
     <Stack direction="row" justifyContent="flex-end" spacing={0} sx={{mt: 1}}>
-      <FormGroup>
-        <FormControlLabel control={
-          <Switch onChange={handleRequiredChange}/>} label="Required" sx={{m: 0}}/>
-      </FormGroup>
+      <FormControlLabel sx={{m: 0}} control={
+        <Checkbox size="small" onChange={handleRequiredChange}/>}
+        label="Required"/>
       <LongMenu onDelete={configProps.onFieldDeleted}/>
     </Stack>
   </div>

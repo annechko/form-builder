@@ -13,4 +13,4 @@ ci-build:
 	docker-compose run --rm node npm i
 	docker-compose run --rm node npm run build
 
-init: docker-down docker-up app-start
+init: docker-down docker-up start
