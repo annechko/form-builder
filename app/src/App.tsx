@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './App.module.css';
 import {FieldConfiguration, FieldSettings, FieldType} from "./configuration/FieldConfiguration";
-import {FieldView} from "./view/FieldView";
+import {FieldView, FieldViewStyles} from "./view/FieldView";
 import AddIcon from '@mui/icons-material/Add';
 import {
   Badge,
@@ -9,7 +9,10 @@ import {
   Button,
   Divider,
   FormControlLabel,
+  FormLabel,
   Paper,
+  Radio,
+  RadioGroup,
   Switch,
   Table,
   TableBody,
@@ -22,6 +25,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import IconButton from "@mui/material/IconButton";
+import FormControl from "@mui/material/FormControl";
+import {TextFieldVariants} from "@mui/material/TextField/TextField";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -64,6 +69,7 @@ function a11yProps(index: number) {
 
 type TabsProps = {
   debugMode: boolean,
+  formStyle: TextFieldVariants,
   colors: string[],
   fieldsSettings: FieldSettings[],
 }
@@ -77,7 +83,8 @@ type TabsConfProps = {
   fieldsCount: number,
   onAddField: (event: object) => void,
   onToggleDebug: () => void,
-
+  onStyleSelected: (event: React.ChangeEvent, value: string) => void,
+  formStyle: TextFieldVariants,
 }
 type FieldsValueErrors = { [index: string]: { message: string } }
 
@@ -160,6 +167,7 @@ function ViewTabs(tabsProps: TabsProps) {
                 border: tabsProps.debugMode ? '1px dashed ' + tabsProps.colors[i] : '1px dashed #ffffff00'
               }}>
                 <FieldView settings={s} onChange={onFieldValueChange(i)} value={fieldValues[i]}
+                  variant={tabsProps.formStyle}
                   error={errors[i]}/>
               </Box>
             </div>
@@ -229,8 +237,27 @@ function ConfigTabs(tabsProps: TabsConfProps) {
 
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <FormControlLabel control={
-          <Switch onChange={tabsProps.onToggleDebug}/>} label="Debug" checked={tabsProps.debugMode === true}/>
+        <FormControl fullWidth>
+          <FormLabel id="debug-label">Debug Mode</FormLabel>
+          <Switch onChange={tabsProps.onToggleDebug} checked={tabsProps.debugMode === true}
+            aria-labelledby={'debug-label'}/>
+        </FormControl>
+
+        <FormControl fullWidth>
+          <FormLabel id="demo-row-radio-buttons-group-label">Fields Style</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            name="row-radio-buttons-group"
+            onChange={tabsProps.onStyleSelected}
+          >
+            {FieldViewStyles.map((t: string, i) =>
+              <FormControlLabel key={i} value={t} control={
+                <Radio checked={t === tabsProps.formStyle}/>} label={t}/>
+            )}
+
+          </RadioGroup>
+        </FormControl>
       </CustomTabPanel>
 
     </Box>
@@ -298,12 +325,17 @@ export default function App() {
   const defaultFieldsSettings: FieldSettings[] = [
     defaultSettings,
   ]
+  const [formStyle, setFormStyle] = React.useState<TextFieldVariants>('filled');
   const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettings[]>(defaultFieldsSettings);
   const [debugMode, setDebugMode] = React.useState<boolean>(false);
   const [colors, setColors] = React.useState<string[]>([randColor()]);
 
   function onToggleDebug() {
     setDebugMode(!debugMode)
+  }
+
+  function onStyleSelected(event: React.ChangeEvent, value: string) {
+    setFormStyle(value as TextFieldVariants)
   }
 
   const onAddField = (event: object) => {
@@ -343,6 +375,8 @@ export default function App() {
     <div className={styles.content}>
       <ConfigTabs {...{
         debugMode,
+        onStyleSelected,
+        formStyle,
         onToggleDebug,
         colors,
         fieldsSettings,
@@ -351,7 +385,7 @@ export default function App() {
         onFieldDeleted,
         onFieldSettingsChanged
       }}/>
-      <ViewTabs {...{debugMode, colors, fieldsSettings}}/>
+      <ViewTabs {...{debugMode, colors, fieldsSettings, formStyle}}/>
     </div>
   );
 }

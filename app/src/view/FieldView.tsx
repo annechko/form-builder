@@ -2,11 +2,14 @@ import * as React from "react";
 import {FieldSettings, FieldType} from "../configuration/FieldConfiguration";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
+import {TextFieldVariants} from "@mui/material/TextField/TextField";
 
+export const FieldViewStyles = ['outlined', 'standard', 'filled']
 export type FieldViewProps = {
   settings: FieldSettings,
   onChange?: (event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   value?: string,
+  variant?: TextFieldVariants,
   error?: { message: string },
 };
 
@@ -30,7 +33,9 @@ export function FieldView(viewProps: FieldViewProps) {
   };
   return <div>
     <FormControl fullWidth>
-      <TextField id="outlined-basic" label={settings.label} variant="filled" size="small"
+      <TextField id="outlined-basic" label={settings.label}
+        variant={viewProps.variant}
+        size="small"
         onBlur={viewProps.onChange}
         value={value}
         onChange={handleValueChange}
