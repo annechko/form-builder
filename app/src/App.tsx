@@ -66,7 +66,6 @@ type TabsProps = {
   debugMode: boolean,
   colors: string[],
   fieldsSettings: FieldSettings[],
-
 }
 
 type TabsConfProps = {
@@ -82,26 +81,58 @@ type TabsConfProps = {
 }
 
 function ViewTabs(tabsProps: TabsProps) {
-  const [value, setValue] = React.useState(0);
+  const [selectedTabIndex, setSelectedTabIndex] = React.useState(0);
+  const [fieldValues, setFieldValues] = React.useState<string[]>([]);
+  React.useEffect(() => {
+    setTableHeaders(tabsProps.fieldsSettings.map((s: FieldSettings) => s.label || ''))
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  }, [tabsProps.fieldsSettings])
+  const [responsesCount, setResponsesCount] = React.useState<number>(0);
+  const [tableHeaders, setTableHeaders] = React.useState<string[]>(
+    tabsProps.fieldsSettings.map((s: FieldSettings, i: number) => (s.label || '') + i));
+  let defaultRows = [[]]
+  // for (let i = 0; i < tabsProps.fieldsSettings.length; i++) {
+  //   defaultRows.push()
+  // }
+  const [tableRows, setTableRows] = React.useState<string[][]>(defaultRows);
+
+  const onTabSelected = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedTabIndex(newValue);
+    if (newValue === 1) {
+      setResponsesCount(0)
+    }
   };
+  const onSubmitResponse = () => {
+    tableRows.push([...fieldValues])
+    setTableRows([...tableRows])
+    setFieldValues([])
+    setResponsesCount(responsesCount + 1)
+  };
+
+
+  function onFieldValueChange(fieldIndex: number) {
+    return (event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (event) {
+        fieldValues[fieldIndex] = event.target.value
+        setFieldValues([...fieldValues])
+      }
+    }
+  }
 
   return (
     <Box className={styles.card}>
       <Box sx={{borderBottom: 1, borderColor: 'divider', p: 0}}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        <Tabs value={selectedTabIndex} onChange={onTabSelected} aria-label="basic tabs example">
           <Tab label="Preview" {...a11yProps(0)} sx={{textTransform: 'none',}}/>
 
           <Tab label={
-            <Badge variant="dot" badgeContent={1} color="primary" {...a11yProps(1)} sx={{textTransform: 'none',}}>
+            <Badge variant="dot" badgeContent={responsesCount} color="primary" {...a11yProps(1)} sx={{textTransform: 'none',}}>
               Responses
             </Badge>}/>
 
         </Tabs>
       </Box>
-      <CustomTabPanel value={value} index={0}>
+      <CustomTabPanel value={selectedTabIndex} index={0}>
 
         <Typography variant="body1" component="div" sx={{mt: 2}}>
           {tabsProps.fieldsSettings.map((s: FieldSettings, i: number) => (
@@ -110,7 +141,7 @@ function ViewTabs(tabsProps: TabsProps) {
                 p: 1,
                 border: tabsProps.debugMode ? '1px dashed ' + tabsProps.colors[i] : '1px dashed #ffffff00'
               }}>
-                <FieldView settings={s}/>
+                <FieldView settings={s} onChange={onFieldValueChange(i)} value={fieldValues[i]}/>
               </Box>
             </div>
           ))}
@@ -121,14 +152,14 @@ function ViewTabs(tabsProps: TabsProps) {
           justifyContent="center"
 
         >
-          <Button variant="contained">Test Submit</Button>
+          <Button variant="contained" onClick={onSubmitResponse}>Test Submit</Button>
 
         </Box>
 
 
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <BasicTable/>
+      <CustomTabPanel value={selectedTabIndex} index={1}>
+        <BasicTable headers={tableHeaders} rows={tableRows}/>
       </CustomTabPanel>
 
     </Box>
@@ -203,33 +234,33 @@ const rows = [
   createData('Cupcake', 305, 3.7, 67, 4.3),
   createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
+type TableProps = {
+  headers: string[],
+  rows: string[][],
+}
 
-function BasicTable() {
+function BasicTable(tableProps: TableProps) {
   return (
     <TableContainer component={Paper} sx={{maxWidth: 400, overflowX: 'scroll'}}>
       <Table sx={{minWidth: 500, overflowX: 'scroll'}} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">D&nbsp;(g)</TableCell>
-            <TableCell align="right">D&nbsp;(g)</TableCell>
+            {tableProps.headers.map((header, i) => <TableCell key={i}>{header}</TableCell>)}
+
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {tableProps.rows.map((row, i) => (
             <TableRow
-              key={row.name}
+              key={i}
               sx={{'&:last-child td, &:last-child th': {border: 0}}}
             >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
+
+              {tableProps.headers.map((header, headerIndex) =>
+                <TableCell component={headerIndex === 0 ? "th" : "td"} scope="row" key={i + '' + headerIndex}>
+                  {row[headerIndex]}
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
