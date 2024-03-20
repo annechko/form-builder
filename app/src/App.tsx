@@ -149,7 +149,8 @@ function ViewTabs(tabsProps: TabsProps) {
           justifyContent="center"
 
         >
-          <Button variant="contained" onClick={onSubmitResponse}>Test Submit</Button>
+          <Button variant="contained" onClick={onSubmitResponse}
+            disabled={tabsProps.fieldsSettings.length === 0}>Test Submit</Button>
 
         </Box>
 
