@@ -3,10 +3,16 @@ import styles from './App.module.css';
 import {FieldConfiguration, FieldSettings, FieldType} from "./configuration/FieldConfiguration";
 import {FieldView, FieldViewStyles} from "./view/FieldView";
 import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import ZoomOutMapSharpIcon from '@mui/icons-material/ZoomOutMapSharp';
 import {
   Badge,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControlLabel,
   FormLabel,
@@ -47,7 +53,7 @@ function CustomTabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{p: 3,}}>
+        <Box sx={{p: 3, pt: 1}}>
           <Typography component="div" sx={{
             overflowY: 'scroll',
             maxHeight: '70vh',
@@ -69,8 +75,8 @@ function a11yProps(index: number) {
 
 type TabsProps = {
   debugMode: boolean,
-  formStyle: TextFieldVariants,
   colors: string[],
+  formStyle: TextFieldVariants,
   fieldsSettings: FieldSettings[],
 }
 
@@ -90,8 +96,6 @@ type FieldsValueErrors = { [index: string]: { message: string } }
 
 function ViewTabs(tabsProps: TabsProps) {
   const [selectedTabIndex, setSelectedTabIndex] = React.useState(0);
-  const [errors, setErrors] = React.useState<FieldsValueErrors>({});
-  const [fieldValues, setFieldValues] = React.useState<string[]>([]);
   React.useEffect(() => {
     setTableHeaders(['#', ...tabsProps.fieldsSettings.map((s: FieldSettings) => s.label || '')])
     setTableRows([])
@@ -101,7 +105,16 @@ function ViewTabs(tabsProps: TabsProps) {
     tabsProps.fieldsSettings.map((s: FieldSettings, i: number) => (s.label || '') + i)
   );
   const [tableRows, setTableRows] = React.useState<string[][]>([]);
-
+  const [open, setOpen] = React.useState(false);
+  const descriptionElementRef = React.useRef<HTMLElement>(null);
+  React.useEffect(() => {
+    if (open) {
+      const {current: descriptionElement} = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
   const onTabSelected = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTabIndex(newValue);
     if (newValue === 1) {
@@ -109,39 +122,14 @@ function ViewTabs(tabsProps: TabsProps) {
     }
   };
 
-  function validateValues(
-    fieldValues: string[],
-    fieldsSettings: FieldSettings[]): FieldsValueErrors {
-    let _errors: FieldsValueErrors = {};
-    fieldsSettings.forEach((settings: FieldSettings, index: number) => {
-      if (settings.isRequired && (fieldValues[index] === '' || fieldValues[index] === undefined)) {
-        _errors[index] = {message: 'Required field'}
-      }
-    })
-
-    return _errors;
-  }
-
-  const onSubmitResponse = () => {
-    const errorsUpdated = validateValues(fieldValues, tabsProps.fieldsSettings)
-    setErrors(errorsUpdated)
-    if (Object.keys(errorsUpdated).length === 0) {
-      tableRows.push([new Date().toLocaleString(), ...fieldValues])
-      setTableRows([...tableRows])
-      setFieldValues([])
-      setResponsesCount(responsesCount + 1)
-    }
+  const handleClickOpen = () => {
+    setOpen(true);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-  function onFieldValueChange(fieldIndex: number) {
-    return (event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      if (event) {
-        fieldValues[fieldIndex] = event.target.value
-        setFieldValues([...fieldValues])
-      }
-    }
-  }
 
   return (
     <Box className={styles.card}>
@@ -158,31 +146,57 @@ function ViewTabs(tabsProps: TabsProps) {
         </Tabs>
       </Box>
       <CustomTabPanel value={selectedTabIndex} index={0}>
+        <React.Fragment>
+          <Box mt={0}
+            display="flex"
+            justifyContent="right">
+            <IconButton sx={{mt: 0, pb: 0, pt: 0}} aria-label="see" onClick={handleClickOpen}>
+              <ZoomOutMapSharpIcon/>
+            </IconButton>
+          </Box>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            scroll="paper"
+            component="div"
+            fullWidth
+            maxWidth="md"
+            aria-labelledby="scroll-dialog-title"
+            aria-describedby="scroll-dialog-description"
+          >
+            <DialogTitle id="scroll-dialog-title">Form Preview</DialogTitle>
+            <IconButton
+              aria-label="close"
+              onClick={handleClose}
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+                color: (theme) => theme.palette.grey[500],
+              }}
+            >
+              <CloseIcon/>
+            </IconButton>
+            <DialogContent dividers
+              id="scroll-dialog-description"
+              ref={descriptionElementRef}
+              tabIndex={-1}
+            >
+              <FormView formStyle={tabsProps.formStyle} fieldsSettings={tabsProps.fieldsSettings}
+                responsesCount={responsesCount} tableRows={tableRows}
+                setTableRows={setTableRows} setResponsesCount={setResponsesCount}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+            </DialogActions>
+          </Dialog>
+        </React.Fragment>
 
-        <Typography variant="body1" component="div" sx={{mt: 2}}>
-          {tabsProps.fieldsSettings.map((s: FieldSettings, i: number) => (
-            <div key={i}>
-              <Box component="section" sx={{
-                p: 1,
-                border: tabsProps.debugMode ? '1px dashed ' + tabsProps.colors[i] : '1px dashed #ffffff00'
-              }}>
-                <FieldView settings={s} onChange={onFieldValueChange(i)} value={fieldValues[i]}
-                  variant={tabsProps.formStyle}
-                  error={errors[i]}/>
-              </Box>
-            </div>
-          ))}
-        </Typography>
-        <Box
-          mt={2}
-          display="flex"
-          justifyContent="center"
-
-        >
-          <Button variant="contained" onClick={onSubmitResponse}
-            disabled={tabsProps.fieldsSettings.length === 0}>Test Submit</Button>
-
-        </Box>
+        <FormView formStyle={tabsProps.formStyle} fieldsSettings={tabsProps.fieldsSettings}
+          responsesCount={responsesCount} tableRows={tableRows}
+          setTableRows={setTableRows} setResponsesCount={setResponsesCount}
+        />
 
 
       </CustomTabPanel>
@@ -192,6 +206,86 @@ function ViewTabs(tabsProps: TabsProps) {
 
     </Box>
   );
+}
+
+type FormViewProps = {
+  responsesCount: number;
+  formStyle: TextFieldVariants,
+  fieldsSettings: FieldSettings[],
+  tableRows: string[][],
+  setTableRows: (tableRows: string[][]) => void,
+  setResponsesCount: (n: number) => void,
+}
+
+function FormView(_props: FormViewProps) {
+  const [fieldValues, setFieldValues] = React.useState<string[]>([]);
+  const [errors, setErrors] = React.useState<FieldsValueErrors>({});
+
+  function validateValues(
+    fieldValues: string[],
+    fieldsSettings: FieldSettings[]): FieldsValueErrors {
+    let _errors: FieldsValueErrors = {};
+    fieldsSettings.forEach((settings: FieldSettings, index: number) => {
+      if (settings.isRequired && (fieldValues[index] === '' || fieldValues[index] === undefined)) {
+        _errors[index] = {message: 'Required field'}
+      }
+    })
+
+    return _errors;
+  }
+
+  const onSubmitResponse = () => {
+    const errorsUpdated = validateValues(fieldValues, _props.fieldsSettings)
+    setErrors(errorsUpdated)
+    if (Object.keys(errorsUpdated).length === 0) {
+      _props.tableRows.push([new Date().toLocaleString(), ...fieldValues])
+      _props.setTableRows([..._props.tableRows])
+      setFieldValues([])
+      _props.setResponsesCount(_props.responsesCount + 1)
+    }
+  };
+
+  function onFieldValueChange(fieldIndex: number) {
+    return (event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (event) {
+        fieldValues[fieldIndex] = event.target.value
+        setFieldValues([...fieldValues])
+      }
+    }
+  }
+
+  return <>
+    <Box
+
+      display="flex"
+      justifyContent="center"
+    >
+      <form style={{width: "400px"}}>
+        <Typography variant="body1" component="div">
+          {_props.fieldsSettings.map((s: FieldSettings, i: number) => (
+            <div key={i}>
+              <Box component="section" sx={{
+                p: 1,
+              }}>
+                <FieldView settings={s} onChange={onFieldValueChange(i)} value={fieldValues[i]}
+                  variant={_props.formStyle}
+                  error={errors[i]}/>
+              </Box>
+            </div>
+          ))}
+        </Typography>
+        <Box
+          mt={2}
+          display="flex"
+          justifyContent="center"
+        >
+          <Button variant="contained" onClick={onSubmitResponse}
+            disabled={_props.fieldsSettings.length === 0}>Test Submit</Button>
+
+        </Box>
+      </form>
+    </Box>
+  </>
 }
 
 function ConfigTabs(tabsProps: TabsConfProps) {

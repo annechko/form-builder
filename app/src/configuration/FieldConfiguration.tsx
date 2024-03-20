@@ -129,8 +129,9 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
       </FormControl>
     </Stack>
     <Stack direction="row" justifyContent="flex-end" spacing={0} sx={{mt: 1}}>
-      <FormControlLabel sx={{m: 0}} control={
-        <Checkbox size="small" onChange={handleRequiredChange}/>}
+      <FormControlLabel sx={{m: 0, fontSize: "0.8rem"}}
+        componentsProps={{typography: {sx: {fontSize: "0.8rem"}}}}
+        control={<Checkbox size="small" onChange={handleRequiredChange} sx={{p: 0.5}}/>}
         label="Required"/>
       <LongMenu onDelete={configProps.onFieldDeleted}/>
     </Stack>
