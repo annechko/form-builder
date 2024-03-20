@@ -79,9 +79,11 @@ type TabsConfProps = {
   onToggleDebug: () => void,
 
 }
+type FieldsValueErrors = { [index: string]: { message: string } }
 
 function ViewTabs(tabsProps: TabsProps) {
   const [selectedTabIndex, setSelectedTabIndex] = React.useState(0);
+  const [errors, setErrors] = React.useState<FieldsValueErrors>({});
   const [fieldValues, setFieldValues] = React.useState<string[]>([]);
   React.useEffect(() => {
     setTableHeaders(['#', ...tabsProps.fieldsSettings.map((s: FieldSettings) => s.label || '')])
@@ -99,11 +101,29 @@ function ViewTabs(tabsProps: TabsProps) {
       setResponsesCount(0)
     }
   };
+
+  function validateValues(
+    fieldValues: string[],
+    fieldsSettings: FieldSettings[]): FieldsValueErrors {
+    let _errors: FieldsValueErrors = {};
+    fieldsSettings.forEach((settings: FieldSettings, index: number) => {
+      if (settings.isRequired && (fieldValues[index] === '' || fieldValues[index] === undefined)) {
+        _errors[index] = {message: 'Required field'}
+      }
+    })
+
+    return _errors;
+  }
+
   const onSubmitResponse = () => {
-    tableRows.push([new Date().toLocaleString(), ...fieldValues])
-    setTableRows([...tableRows])
-    setFieldValues([])
-    setResponsesCount(responsesCount + 1)
+    const errorsUpdated = validateValues(fieldValues, tabsProps.fieldsSettings)
+    setErrors(errorsUpdated)
+    if (Object.keys(errorsUpdated).length === 0) {
+      tableRows.push([new Date().toLocaleString(), ...fieldValues])
+      setTableRows([...tableRows])
+      setFieldValues([])
+      setResponsesCount(responsesCount + 1)
+    }
   };
 
 
@@ -123,7 +143,8 @@ function ViewTabs(tabsProps: TabsProps) {
           <Tab label="Preview" {...a11yProps(0)} sx={{textTransform: 'none',}}/>
 
           <Tab label={
-            <Badge variant="dot" badgeContent={responsesCount} color="primary" {...a11yProps(1)} sx={{textTransform: 'none',}}>
+            <Badge variant="dot" badgeContent={responsesCount} color="primary" {...a11yProps(1)}
+              sx={{textTransform: 'none',}}>
               Responses
             </Badge>}/>
 
@@ -138,7 +159,8 @@ function ViewTabs(tabsProps: TabsProps) {
                 p: 1,
                 border: tabsProps.debugMode ? '1px dashed ' + tabsProps.colors[i] : '1px dashed #ffffff00'
               }}>
-                <FieldView settings={s} onChange={onFieldValueChange(i)} value={fieldValues[i]}/>
+                <FieldView settings={s} onChange={onFieldValueChange(i)} value={fieldValues[i]}
+                  error={errors[i]}/>
               </Box>
             </div>
           ))}

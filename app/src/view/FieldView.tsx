@@ -6,39 +6,41 @@ import FormControl from "@mui/material/FormControl";
 export type FieldViewProps = {
   settings: FieldSettings,
   onChange?: (event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
-  value?: string
+  value?: string,
+  error?: { message: string },
 };
 
 export function FieldView(viewProps: FieldViewProps) {
   const settings = viewProps.settings
-  const [value, setValue] = React.useState<string>(viewProps.value||'');
+  const [value, setValue] = React.useState<string>(viewProps.value || '');
+  const [error, setError] = React.useState<string | undefined>(viewProps.error?.message);
   React.useEffect(() => {
-    setValue( viewProps.value||'')
+    setValue(viewProps.value || '')
 
   }, [viewProps.value])
+  React.useEffect(() => {
+    setError(viewProps.error?.message)
+
+  }, [viewProps.error])
   const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue( event.target.value)
+    setValue(event.target.value)
+    if (settings.isRequired && event.target.value) {
+      setError(undefined)
+    }
   };
-  if (settings.type === FieldType.input) {
-    return <div>
-      <FormControl fullWidth>
-        <TextField id="outlined-basic" label={settings.label} variant="filled" size="small"
-          onBlur={viewProps.onChange}
-          value={value}
-          onChange={handleValueChange}
-          required={settings.isRequired === true}/>
-      </FormControl>
-    </div>
-  } else if (settings.type === FieldType.textarea) {
-    return <div>
-      <FormControl fullWidth>
-        <TextField id="outlined-basic" label={settings.label} variant="filled" size="small"
-          onBlur={viewProps.onChange}
-          value={value}
-          onChange={handleValueChange}
-          required={settings.isRequired === true}
-          multiline rows={3}/>
-      </FormControl>
-    </div>
-  }
+  return <div>
+    <FormControl fullWidth>
+      <TextField id="outlined-basic" label={settings.label} variant="filled" size="small"
+        onBlur={viewProps.onChange}
+        value={value}
+        onChange={handleValueChange}
+        required={settings.isRequired === true}
+        error={error !== undefined}
+        helperText={error}
+
+        multiline={settings.type === FieldType.textarea}
+        rows={3}/>
+    </FormControl>
+  </div>
+
 }
