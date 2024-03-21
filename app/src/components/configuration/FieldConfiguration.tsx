@@ -81,15 +81,13 @@ export type FieldSettings = {
 };
 
 export type FieldConfigurationProps = {
-  settings?: FieldSettings,
+  settings: FieldSettings,
   onSettingsChanged?: (newSettings: FieldSettings) => void,
   onFieldDeleted?: () => void,
 };
 
 export function FieldConfiguration(configProps: FieldConfigurationProps) {
-  const defaultSettings: FieldSettings = {type: FieldType.input}
-
-  const [settings, setSettings] = React.useState<FieldSettings>(configProps.settings || defaultSettings);
+  const [settings, setSettings] = React.useState<FieldSettings>(configProps.settings);
   const updateSettings = (newSettings: FieldSettings) => {
     setSettings(newSettings)
     if (configProps.onSettingsChanged) {

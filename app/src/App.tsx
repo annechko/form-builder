@@ -219,8 +219,9 @@ function ConfigTabs(props: ConfigTabsProps) {
 }
 
 export default function App() {
-  const defaultSettings: FieldSettings = {type: FieldType.input}
+  const defaultSettings: FieldSettings = {type: FieldType.input, label: 'Field'}
   const defaultFieldsSettings: FieldSettings[] = [
+    {type: FieldType.title, label: 'New Form Title'},
     defaultSettings,
   ]
   const [formStyle, setFormStyle] = React.useState<TextFieldVariants>('filled');
