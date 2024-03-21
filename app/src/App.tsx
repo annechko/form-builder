@@ -16,10 +16,8 @@ import {
   Divider,
   FormControlLabel,
   FormLabel,
-  Paper,
   Radio,
   RadioGroup,
-  Switch,
   Table,
   TableBody,
   TableCell,
@@ -74,21 +72,16 @@ function a11yProps(index: number) {
 }
 
 type TabsProps = {
-  debugMode: boolean,
-  colors: string[],
   formStyle: TextFieldVariants,
   fieldsSettings: FieldSettings[],
 }
 
 type TabsConfProps = {
-  debugMode: boolean,
-  colors: string[],
   fieldsSettings: FieldSettings[],
   onFieldSettingsChanged: (index: number) => (newFieldSettings: FieldSettings) => void,
   onFieldDeleted: Function,
   fieldsCount: number,
   onAddField: (event: object) => void,
-  onToggleDebug: () => void,
   onStyleSelected: (event: React.ChangeEvent, value: string) => void,
   formStyle: TextFieldVariants,
 }
@@ -186,6 +179,7 @@ function ViewTabs(tabsProps: TabsProps) {
             <DialogContent dividers
               id="scroll-dialog-description"
               ref={descriptionElementRef}
+              sx={{minHeight: '70vh'}}
               tabIndex={-1}
             >
               <FormView formStyle={tabsProps.formStyle} fieldsSettings={tabsProps.fieldsSettings}
@@ -318,7 +312,6 @@ function ConfigTabs(tabsProps: TabsConfProps) {
                 pb: 0,
                 pt: 2,
                 mb: 1,
-                border: tabsProps.debugMode ? '1px dashed ' + tabsProps.colors[i] : '1px dashed #ffffff00'
               }}>
                 <FieldConfiguration settings={s} onSettingsChanged={tabsProps.onFieldSettingsChanged(i)}
                   onFieldDeleted={tabsProps.onFieldDeleted(i)}
@@ -335,11 +328,6 @@ function ConfigTabs(tabsProps: TabsConfProps) {
 
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <FormControl fullWidth>
-          <FormLabel id="debug-label">Debug Mode</FormLabel>
-          <Switch onChange={tabsProps.onToggleDebug} checked={tabsProps.debugMode === true}
-            aria-labelledby={'debug-label'}/>
-        </FormControl>
 
         <FormControl fullWidth>
           <FormLabel id="demo-row-radio-buttons-group-label">Fields Style</FormLabel>
@@ -396,21 +384,25 @@ function BasicTable(tableProps: TableProps) {
   };
 
   function ResponsesTable({minWidth = 400, maxWidth = 400}) {
-    return <TableContainer component={Paper} sx={{maxWidth: maxWidth, overflowX: 'scroll'}}>
-      <Table sx={{minWidth: minWidth, overflowX: 'scroll'}} aria-label="simple table">
+    return <TableContainer component="div" sx={{maxWidth: maxWidth, overflowX: 'scroll'}}>
+      <Table sx={{minWidth: minWidth, overflowX: 'scroll'}} aria-label="responses">
         <TableHead>
           <TableRow>
-            {tableProps.headers.map((header, i) => <TableCell key={i}>{header}</TableCell>)}
+            {tableProps.headers.map((header, i) => <TableCell key={i}
+              sx={{
+                border: '1px solid rgba(224, 224, 224, 1)',
+                fontWeight: '550'
+              }}>{header}</TableCell>)}
           </TableRow>
         </TableHead>
         <TableBody>
           {tableProps.rows.map((row, i) => (
             <TableRow
               key={i}
-              sx={{'&:last-child td, &:last-child th': {border: 0}}}
             >
               {tableProps.headers.map((header, headerIndex) =>
-                <TableCell component={headerIndex === 0 ? "th" : "td"} scope="row" key={i + '' + headerIndex}>
+                <TableCell component={headerIndex === 0 ? "th" : "td"} scope="row" key={i + '' + headerIndex}
+                  sx={{border: '1px solid rgba(224, 224, 224, 1)'}}>
                   {row[headerIndex]}
                 </TableCell>
               )}
@@ -463,6 +455,7 @@ function BasicTable(tableProps: TableProps) {
         <DialogContent dividers
           id="scroll-dialog-description"
           ref={descriptionElementRef}
+          sx={{minHeight: '70vh'}}
           tabIndex={-1}
         >
           <ResponsesTable minWidth={700} maxWidth={1000}/>
@@ -476,10 +469,6 @@ function BasicTable(tableProps: TableProps) {
   </>
 }
 
-function randColor(): string {
-  return '#' + Math.floor(Math.random() * 16777215).toString(16);
-}
-
 export default function App() {
   const defaultSettings: FieldSettings = {type: FieldType.input}
   const defaultFieldsSettings: FieldSettings[] = [
@@ -487,12 +476,6 @@ export default function App() {
   ]
   const [formStyle, setFormStyle] = React.useState<TextFieldVariants>('filled');
   const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettings[]>(defaultFieldsSettings);
-  const [debugMode, setDebugMode] = React.useState<boolean>(false);
-  const [colors, setColors] = React.useState<string[]>([randColor()]);
-
-  function onToggleDebug() {
-    setDebugMode(!debugMode)
-  }
 
   function onStyleSelected(event: React.ChangeEvent, value: string) {
     setFormStyle(value as TextFieldVariants)
@@ -500,7 +483,6 @@ export default function App() {
 
   const onAddField = (event: object) => {
     setFieldsSettings([...fieldsSettings, defaultSettings])
-    setColors([...colors, randColor()])
   }
   const onFieldSettingsChanged = (index: number) => {
     return (newFieldSettings: FieldSettings) => {
@@ -524,9 +506,6 @@ export default function App() {
         }
       }
       setFieldsSettings(newSettings)
-      colors.splice(index, 1)
-      setColors([...colors])
-
     }
   }
   const fieldsCount: number = fieldsSettings.length
@@ -534,18 +513,15 @@ export default function App() {
   return (
     <div className={styles.content}>
       <ConfigTabs {...{
-        debugMode,
         onStyleSelected,
         formStyle,
-        onToggleDebug,
-        colors,
         fieldsSettings,
         fieldsCount,
         onAddField,
         onFieldDeleted,
         onFieldSettingsChanged
       }}/>
-      <ViewTabs {...{debugMode, colors, fieldsSettings, formStyle}}/>
+      <ViewTabs {...{fieldsSettings, formStyle}}/>
     </div>
   );
 }
