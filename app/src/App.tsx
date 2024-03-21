@@ -1,12 +1,7 @@
 import * as React from 'react';
 import styles from './App.module.css';
-import {
-  FieldConfiguration,
-  FieldSettings,
-  FieldType
-} from "./components/configuration/FieldConfiguration";
+import {FieldSettings, FieldType} from "./components/configuration/FieldConfiguration";
 import {FieldView} from "./view/FieldView";
-import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import ZoomOutMapSharpIcon from '@mui/icons-material/ZoomOutMapSharp';
 import {
@@ -17,7 +12,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Divider,
   Table,
   TableBody,
   TableCell,
@@ -31,6 +25,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from "@mui/material/IconButton";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
 import {FormSettings} from "./components/configuration/FormSettings";
+import {FormConfiguration} from "./components/configuration/FormConfiguration";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -80,7 +75,7 @@ type TabsProps = {
 type TabsConfProps = {
   fieldsSettings: FieldSettings[],
   onFieldSettingsChanged: (index: number) => (newFieldSettings: FieldSettings) => void,
-  onFieldDeleted: Function,
+  onFieldDeleted: (i: number) => () => void,
   fieldsCount: number,
   onAddField: (event: object) => void,
   onStyleSelected: (event: React.ChangeEvent, value: string) => void,
@@ -305,27 +300,11 @@ function ConfigTabs(tabsProps: TabsConfProps) {
       </Box>
       <CustomTabPanel value={value} index={0}>
 
-        <Typography variant="body1" component="div" sx={{mt: 2, minWidth: '30vw'}}>
-          {tabsProps.fieldsSettings.map((s: FieldSettings, i: number) => (
-            <div key={i}>
-              <Box component="section" sx={{
-                p: 1,
-                pb: 0,
-                pt: 2,
-                mb: 1,
-              }}>
-                <FieldConfiguration settings={s} onSettingsChanged={tabsProps.onFieldSettingsChanged(i)}
-                  onFieldDeleted={tabsProps.onFieldDeleted(i)}
-                />
-              </Box>
-              <Divider/>
-            </div>
-          ))}
-          <IconButton aria-label="delete" onClick={tabsProps.onAddField}>
-            <AddIcon/>
-          </IconButton>
-        </Typography>
-
+        <FormConfiguration fieldsSettings={tabsProps.fieldsSettings}
+          onFieldSettingsChanged={tabsProps.onFieldSettingsChanged}
+          onAddField={tabsProps.onAddField}
+          onFieldDeleted={tabsProps.onFieldDeleted}
+        />
 
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>

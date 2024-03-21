@@ -125,7 +125,7 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
           label="Type"
           onChange={handleTypeChange}
         >
-          {Object.keys(FieldType).map((t) => <MenuItem value={t}>{t}</MenuItem>)}
+          {Object.keys(FieldType).map((t, i) => <MenuItem key={i} value={t}>{t}</MenuItem>)}
         </Select>
       </FormControl>
     </Stack>
