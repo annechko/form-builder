@@ -32,7 +32,7 @@ export function FieldView(viewProps: FieldViewProps) {
     }
   };
   return <div>
-    <FormControl fullWidth>
+    <FormControl fullWidth sx={{pl: 0, pr: 0}}>
       <TextField id="outlined-basic" label={settings.label}
         variant={viewProps.variant}
         size="small"

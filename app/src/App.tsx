@@ -150,7 +150,13 @@ function ViewTabs(tabsProps: TabsProps) {
           <Box mt={0}
             display="flex"
             justifyContent="right">
-            <IconButton sx={{mt: 0, pb: 0, pt: 0}} aria-label="see" onClick={handleClickOpen}>
+            <IconButton sx={{
+              mt: 0,
+              mb: 1,
+              pb: 0,
+              pt: 0,
+              pr: 0
+            }} aria-label="see" onClick={handleClickOpen}>
               <ZoomOutMapSharpIcon/>
             </IconButton>
           </Box>
@@ -264,9 +270,7 @@ function FormView(_props: FormViewProps) {
         <Typography variant="body1" component="div">
           {_props.fieldsSettings.map((s: FieldSettings, i: number) => (
             <div key={i}>
-              <Box component="section" sx={{
-                p: 1,
-              }}>
+              <Box component="section" sx={{pr: 0, pl: 0}}>
                 <FieldView settings={s} onChange={onFieldValueChange(i)} value={fieldValues[i]}
                   variant={_props.formStyle}
                   error={errors[i]}/>
@@ -381,13 +385,22 @@ type TableProps = {
 }
 
 function BasicTable(tableProps: TableProps) {
-  return (
-    <TableContainer component={Paper} sx={{maxWidth: 400, overflowX: 'scroll'}}>
-      <Table sx={{minWidth: 500, overflowX: 'scroll'}} aria-label="simple table">
+  const [open, setOpen] = React.useState(false);
+  const descriptionElementRef = React.useRef<HTMLElement>(null);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  function ResponsesTable({minWidth = 400, maxWidth = 400}) {
+    return <TableContainer component={Paper} sx={{maxWidth: maxWidth, overflowX: 'scroll'}}>
+      <Table sx={{minWidth: minWidth, overflowX: 'scroll'}} aria-label="simple table">
         <TableHead>
           <TableRow>
             {tableProps.headers.map((header, i) => <TableCell key={i}>{header}</TableCell>)}
-
           </TableRow>
         </TableHead>
         <TableBody>
@@ -396,7 +409,6 @@ function BasicTable(tableProps: TableProps) {
               key={i}
               sx={{'&:last-child td, &:last-child th': {border: 0}}}
             >
-
               {tableProps.headers.map((header, headerIndex) =>
                 <TableCell component={headerIndex === 0 ? "th" : "td"} scope="row" key={i + '' + headerIndex}>
                   {row[headerIndex]}
@@ -407,7 +419,61 @@ function BasicTable(tableProps: TableProps) {
         </TableBody>
       </Table>
     </TableContainer>
-  );
+  }
+
+  return <>
+    <React.Fragment>
+      <Box mt={0}
+        display="flex"
+        justifyContent="right"
+        sx={{pr: 0}}>
+        <IconButton sx={{
+          mt: 0,
+          mb: 1,
+          pb: 0,
+          pt: 0,
+          pr: 0
+        }} aria-label="see" onClick={handleClickOpen}>
+          <ZoomOutMapSharpIcon/>
+        </IconButton>
+      </Box>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        scroll="paper"
+        component="div"
+        fullWidth
+        maxWidth="md"
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      >
+        <DialogTitle id="scroll-dialog-title">Responses Preview</DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon/>
+        </IconButton>
+        <DialogContent dividers
+          id="scroll-dialog-description"
+          ref={descriptionElementRef}
+          tabIndex={-1}
+        >
+          <ResponsesTable minWidth={700} maxWidth={1000}/>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
+    <ResponsesTable/>
+  </>
 }
 
 function randColor(): string {
