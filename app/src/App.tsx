@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './App.module.css';
-import {FieldConfiguration, FieldSettings, FieldType} from "./configuration/FieldConfiguration";
-import {FieldView, FieldViewStyles} from "./view/FieldView";
+import {FieldConfiguration, FieldSettings, FieldType} from "./components/configuration/FieldConfiguration";
+import {FieldView, FieldViewStyles} from "./components/view/FieldView";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import ZoomOutMapSharpIcon from '@mui/icons-material/ZoomOutMapSharp';
