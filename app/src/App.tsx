@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styles from './App.module.css';
 import {FieldSettings, FieldType} from "./components/configuration/FieldConfiguration";
-import {FieldView} from "./components/view/FieldView";
 import CloseIcon from '@mui/icons-material/Close';
 import ZoomOutMapSharpIcon from '@mui/icons-material/ZoomOutMapSharp';
 import {Badge, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
@@ -13,6 +12,7 @@ import {TextFieldVariants} from "@mui/material/TextField/TextField";
 import {FormSettings} from "./components/configuration/FormSettings";
 import {FormConfiguration} from "./components/configuration/FormConfiguration";
 import {ResponsesTable} from "./components/view/ResponsesTable";
+import {FormView} from "./components/view/FormView";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -68,7 +68,6 @@ type TabsConfProps = {
   onStyleSelected: (event: React.ChangeEvent, value: string) => void,
   formStyle: TextFieldVariants,
 }
-type FieldsValueErrors = { [index: string]: { message: string } }
 
 function ViewTabs(tabsProps: TabsProps) {
   const [selectedTabIndex, setSelectedTabIndex] = React.useState(0);
@@ -185,83 +184,6 @@ function ViewTabs(tabsProps: TabsProps) {
 
     </Box>
   );
-}
-
-type FormViewProps = {
-  responsesCount: number;
-  formStyle: TextFieldVariants,
-  fieldsSettings: FieldSettings[],
-  tableRows: string[][],
-  setTableRows: (tableRows: string[][]) => void,
-  setResponsesCount: (n: number) => void,
-}
-
-function FormView(_props: FormViewProps) {
-  const [fieldValues, setFieldValues] = React.useState<string[]>([]);
-  const [errors, setErrors] = React.useState<FieldsValueErrors>({});
-
-  function validateValues(
-    fieldValues: string[],
-    fieldsSettings: FieldSettings[]): FieldsValueErrors {
-    let _errors: FieldsValueErrors = {};
-    fieldsSettings.forEach((settings: FieldSettings, index: number) => {
-      if (settings.isRequired && (fieldValues[index] === '' || fieldValues[index] === undefined)) {
-        _errors[index] = {message: 'Required field'}
-      }
-    })
-
-    return _errors;
-  }
-
-  const onSubmitResponse = () => {
-    const errorsUpdated = validateValues(fieldValues, _props.fieldsSettings)
-    setErrors(errorsUpdated)
-    if (Object.keys(errorsUpdated).length === 0) {
-      _props.tableRows.push([new Date().toLocaleString(), ...fieldValues])
-      _props.setTableRows([..._props.tableRows])
-      setFieldValues([])
-      _props.setResponsesCount(_props.responsesCount + 1)
-    }
-  };
-
-  function onFieldValueChange(fieldIndex: number) {
-    return (event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      if (event) {
-        fieldValues[fieldIndex] = event.target.value
-        setFieldValues([...fieldValues])
-      }
-    }
-  }
-
-  return <>
-    <Box
-      display="flex"
-      justifyContent="center"
-    >
-      <form style={{minWidth: "30vw"}}>
-        <Typography variant="body1" component="div">
-          {_props.fieldsSettings.map((s: FieldSettings, i: number) => (
-            <div key={i}>
-              <Box component="section" sx={{pr: 0, pl: 0}}>
-                <FieldView settings={s} onChange={onFieldValueChange(i)} value={fieldValues[i]}
-                  variant={_props.formStyle}
-                  error={errors[i]}/>
-              </Box>
-            </div>
-          ))}
-        </Typography>
-        <Box
-          mt={2}
-          display="flex"
-          justifyContent="center"
-        >
-          <Button variant="contained" onClick={onSubmitResponse}
-            disabled={_props.fieldsSettings.length === 0}>Test Submit</Button>
-
-        </Box>
-      </form>
-    </Box>
-  </>
 }
 
 function ConfigTabs(tabsProps: TabsConfProps) {
