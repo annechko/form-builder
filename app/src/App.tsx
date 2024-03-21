@@ -1,7 +1,11 @@
 import * as React from 'react';
 import styles from './App.module.css';
-import {FieldConfiguration, FieldSettings, FieldType} from "./components/configuration/FieldConfiguration";
-import {FieldView, FieldViewStyles} from "./components/view/FieldView";
+import {
+  FieldConfiguration,
+  FieldSettings,
+  FieldType
+} from "./components/configuration/FieldConfiguration";
+import {FieldView} from "./view/FieldView";
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import ZoomOutMapSharpIcon from '@mui/icons-material/ZoomOutMapSharp';
@@ -14,10 +18,6 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
   Table,
   TableBody,
   TableCell,
@@ -29,8 +29,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import IconButton from "@mui/material/IconButton";
-import FormControl from "@mui/material/FormControl";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
+import {FormSettings} from "./components/configuration/FormSettings";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -330,44 +330,13 @@ function ConfigTabs(tabsProps: TabsConfProps) {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
 
-        <FormControl fullWidth sx={{mt: 2}}>
-          <FormLabel id="demo-row-radio-buttons-group-label">Fields Style</FormLabel>
-          <RadioGroup
-            row
-            aria-labelledby="demo-row-radio-buttons-group-label"
-            name="row-radio-buttons-group"
-            onChange={tabsProps.onStyleSelected}
-          >
-            {FieldViewStyles.map((t: string, i) =>
-              <FormControlLabel key={i} value={t} control={
-                <Radio checked={t === tabsProps.formStyle}/>} label={t}/>
-            )}
-
-          </RadioGroup>
-        </FormControl>
+        <FormSettings onStyleSelected={tabsProps.onStyleSelected} formStyle={tabsProps.formStyle}/>
       </CustomTabPanel>
 
     </Box>
   );
 }
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return {name, calories, fat};
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
 type TableProps = {
   headers: string[],
   rows: string[][],

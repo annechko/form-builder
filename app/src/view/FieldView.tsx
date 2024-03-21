@@ -1,5 +1,5 @@
 import * as React from "react";
-import {FieldSettings, FieldType} from "../configuration/FieldConfiguration";
+import {FieldSettings, FieldType} from "../components/configuration/FieldConfiguration";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
