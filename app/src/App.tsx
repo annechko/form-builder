@@ -56,6 +56,7 @@ function CustomTabPanel(props: TabPanelProps) {
             overflowY: 'scroll',
             maxHeight: '70vh',
             minHeight: '70vh',
+            minWidth: '40vh',
             height: 'fit-content'
           }}>{children}</Typography>
         </Box>
@@ -260,7 +261,7 @@ function FormView(_props: FormViewProps) {
       display="flex"
       justifyContent="center"
     >
-      <form style={{width: "400px"}}>
+      <form style={{minWidth: "30vw"}}>
         <Typography variant="body1" component="div">
           {_props.fieldsSettings.map((s: FieldSettings, i: number) => (
             <div key={i}>
@@ -304,7 +305,7 @@ function ConfigTabs(tabsProps: TabsConfProps) {
       </Box>
       <CustomTabPanel value={value} index={0}>
 
-        <Typography variant="body1" component="div" sx={{mt: 2}}>
+        <Typography variant="body1" component="div" sx={{mt: 2, minWidth: '30vw'}}>
           {tabsProps.fieldsSettings.map((s: FieldSettings, i: number) => (
             <div key={i}>
               <Box component="section" sx={{
