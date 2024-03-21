@@ -1,6 +1,6 @@
 import FormControl from "@mui/material/FormControl";
 import {FormControlLabel, FormLabel, Radio, RadioGroup} from "@mui/material";
-import {FieldViewStyles} from "../../view/FieldView";
+import {FieldViewStyles} from "../view/FieldView";
 import * as React from "react";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
 
