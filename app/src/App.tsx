@@ -174,7 +174,6 @@ function ViewTabs(tabsProps: TabsProps) {
             </DialogActions>
           </Dialog>
         </React.Fragment>
-
         <FormView formStyle={tabsProps.formStyle} fieldsSettings={tabsProps.fieldsSettings}
           responsesCount={responsesCount} tableRows={tableRows}
           setTableRows={setTableRows} setResponsesCount={setResponsesCount}
@@ -236,7 +235,6 @@ function FormView(_props: FormViewProps) {
 
   return <>
     <Box
-
       display="flex"
       justifyContent="center"
     >
