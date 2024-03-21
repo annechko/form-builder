@@ -19,12 +19,18 @@ export function FieldView(viewProps: FieldViewProps) {
   const [error, setError] = React.useState<string | undefined>(viewProps.error?.message);
   React.useEffect(() => {
     setValue(viewProps.value || '')
-
   }, [viewProps.value])
   React.useEffect(() => {
     setError(viewProps.error?.message)
-
   }, [viewProps.error])
+  if (settings.type === FieldType.title) {
+    return <>
+      <h3 style={{
+        marginTop: 0,
+        textAlign: 'center'
+      }}>{settings.label}</h3>
+    </>
+  }
   const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value)
     if (settings.isRequired && event.target.value) {

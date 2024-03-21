@@ -329,7 +329,7 @@ function ConfigTabs(tabsProps: TabsConfProps) {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
 
-        <FormControl fullWidth>
+        <FormControl fullWidth sx={{mt: 2}}>
           <FormLabel id="demo-row-radio-buttons-group-label">Fields Style</FormLabel>
           <RadioGroup
             row

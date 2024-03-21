@@ -71,6 +71,7 @@ function LongMenu(props: { onDelete?: Function }) {
 export enum FieldType {
   input = "input",
   textarea = "textarea",
+  title = "title",
 }
 
 export type FieldSettings = {
@@ -109,7 +110,8 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
     <Stack direction="row" spacing={1}>
       <FormControl sx={{mb: 2, minWidth: 120}} fullWidth size="small">
         <Stack direction="row" spacing={1}>
-          <TextField id="outlined-basic" label="Field name" variant="outlined" fullWidth size="small"
+          <TextField id="outlined-basic" label={settings.type === FieldType.title ? 'Title' : 'Field name'}
+            variant="outlined" fullWidth size="small"
             value={settings.label || ''} onChange={handleLabelChange}
           />
         </Stack>
@@ -123,8 +125,7 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
           label="Type"
           onChange={handleTypeChange}
         >
-          <MenuItem value={FieldType.input}>input</MenuItem>
-          <MenuItem value={FieldType.textarea}>textarea</MenuItem>
+          {Object.keys(FieldType).map((t) => <MenuItem value={t}>{t}</MenuItem>)}
         </Select>
       </FormControl>
     </Stack>
