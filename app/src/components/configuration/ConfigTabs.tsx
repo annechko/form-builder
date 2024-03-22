@@ -6,7 +6,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import {FormConfiguration} from "./FormConfiguration";
 import {FormSettings} from "./FormSettings";
-import {FieldSettingsList} from "./FieldConfiguration";
+import {FieldSettings, FieldSettingsList, FieldType} from "./FieldConfiguration";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
 
 type ConfigTabsProps = {
@@ -17,7 +17,37 @@ type ConfigTabsProps = {
 
 export function ConfigTabs(props: ConfigTabsProps) {
   const [value, setValue] = React.useState<TabConfigIds>(TabConfigIds.Fields);
+  const defaultSettings: FieldSettings = {type: FieldType.input, label: 'Field'}
 
+  let defaultFieldsSettings: FieldSettingsList = new FieldSettingsList({})
+  defaultFieldsSettings.add({type: FieldType.title, label: 'New Form Title'})
+  defaultFieldsSettings.add(defaultSettings)
+
+  const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettingsList>(defaultFieldsSettings);
+  React.useEffect(() => {
+    props.onFieldsSettingsChanged(fieldsSettings)
+  }, [props])
+  const updateSettings = (s: FieldSettingsList) => {
+    const newSettings = s.clone()
+    setFieldsSettings(newSettings)
+    props.onFieldsSettingsChanged(newSettings)
+  }
+  const onFieldAdded = (event: object) => {
+    fieldsSettings.add(defaultSettings)
+    updateSettings(fieldsSettings)
+  }
+  const onFieldSettingsChanged = (id: string) => {
+    return (newFieldSettings: FieldSettings) => {
+      fieldsSettings.update(id, newFieldSettings)
+      updateSettings(fieldsSettings)
+    }
+  }
+  const onFieldDeleted = (id: string) => {
+    return () => {
+      fieldsSettings.remove(id)
+      updateSettings(fieldsSettings)
+    }
+  }
   const handleTabChange = (event: React.SyntheticEvent, newValue: TabConfigIds) => {
     setValue(newValue);
   };
@@ -33,7 +63,10 @@ export function ConfigTabs(props: ConfigTabsProps) {
 
       <AppTabPanel value={value} index={TabConfigIds.Fields}>
         <FormConfiguration
-          onFieldsSettingsChanged={props.onFieldsSettingsChanged}
+          fieldsSettings={fieldsSettings}
+          onFieldAdded={onFieldAdded}
+          onFieldDeleted={onFieldDeleted}
+          onFieldSettingsChanged={onFieldSettingsChanged}
         />
       </AppTabPanel>
 

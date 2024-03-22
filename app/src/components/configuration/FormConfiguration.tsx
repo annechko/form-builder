@@ -1,54 +1,22 @@
 import Typography from "@mui/material/Typography";
-import {
-  FieldConfiguration,
-  FieldSettings,
-  FieldSettingsList,
-  FieldType
-} from "./FieldConfiguration";
+import {FieldConfiguration, FieldSettings, FieldSettingsList} from "./FieldConfiguration";
 import {Box, Divider} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import * as React from "react";
 
 type FormConfigurationProps = {
-  onFieldsSettingsChanged: (newFieldSettings: FieldSettingsList) => void,
+  fieldsSettings: FieldSettingsList,
+  onFieldSettingsChanged: (id: string) => (newFieldSettings: FieldSettings) => void,
+  onFieldDeleted: (id: string) => () => void,
+  onFieldAdded: (event: object) => void,
 }
 
 export function FormConfiguration(props: FormConfigurationProps) {
-  const defaultSettings: FieldSettings = {type: FieldType.input, label: 'Field'}
 
-  let defaultFieldsSettings: FieldSettingsList = new FieldSettingsList({})
-  defaultFieldsSettings.add({type: FieldType.title, label: 'New Form Title'})
-  defaultFieldsSettings.add(defaultSettings)
-
-  const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettingsList>(defaultFieldsSettings);
-  React.useEffect(() => {
-    props.onFieldsSettingsChanged(fieldsSettings)
-  }, [props])
-  const updateSettings = (s: FieldSettingsList) => {
-    const newSettings = s.clone()
-    setFieldsSettings(newSettings)
-    props.onFieldsSettingsChanged(newSettings)
-  }
-  const onFieldAdded = (event: object) => {
-    fieldsSettings.add(defaultSettings)
-    updateSettings(fieldsSettings)
-  }
-  const onFieldSettingsChanged = (id: string) => {
-    return (newFieldSettings: FieldSettings) => {
-      fieldsSettings.update(id, newFieldSettings)
-      updateSettings(fieldsSettings)
-    }
-  }
-  const onFieldDeleted = (id: string) => {
-    return () => {
-      fieldsSettings.remove(id)
-      updateSettings(fieldsSettings)
-    }
-  }
   return <>
     <Typography variant="body1" component="div" sx={{mt: 2, minWidth: '30vw'}}>
-      {fieldsSettings.map((s: FieldSettings, id: string) => (
+      {props.fieldsSettings.map((s: FieldSettings, id: string) => (
         <div key={id}>
           <Box component="section" sx={{
             p: 1,
@@ -57,14 +25,14 @@ export function FormConfiguration(props: FormConfigurationProps) {
             mb: 1,
           }}>
             <FieldConfiguration settings={s}
-              onSettingsChanged={onFieldSettingsChanged(id)}
-              onFieldDeleted={onFieldDeleted(id)}
+              onSettingsChanged={props.onFieldSettingsChanged(id)}
+              onFieldDeleted={props.onFieldDeleted(id)}
             />
           </Box>
           <Divider/>
         </div>
       ))}
-      <IconButton aria-label="delete" onClick={onFieldAdded}>
+      <IconButton aria-label="delete" onClick={props.onFieldAdded}>
         <AddIcon/>
       </IconButton>
     </Typography>
