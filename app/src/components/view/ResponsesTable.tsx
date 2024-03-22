@@ -19,7 +19,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 type ResponsesTableProps = {
   headers: string[],
-  rows: { [id: string]: string }
+  rows: string[][]
 }
 
 export function ResponsesTable(props: ResponsesTableProps) {
@@ -46,18 +46,19 @@ export function ResponsesTable(props: ResponsesTableProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {/*{Object.keys(props.rows).forEach((id :string) => (*/}
-          {/*  <TableRow*/}
-          {/*    key={id}*/}
-          {/*  >*/}
-          {/*    {props.headers.map((header, headerIndex) =>*/}
-          {/*      <TableCell component={headerIndex === 0 ? "th" : "td"} scope="row" key={i + '' + headerIndex}*/}
-          {/*        sx={{border: '1px solid rgba(224, 224, 224, 1)'}}>*/}
-          {/*        {row[headerIndex]}*/}
-          {/*      </TableCell>*/}
-          {/*    )}*/}
-          {/*  </TableRow>*/}
-          {/*))}*/}
+          {props.rows.map((row, i) => (
+            <TableRow
+              key={i}
+            >
+              {props.headers.map((header, headerIndex) =>
+                <TableCell component={headerIndex === 0 ? "th" : "td"} scope="row"
+                  key={i + '' + headerIndex}
+                  sx={{border: '1px solid rgba(224, 224, 224, 1)'}}>
+                  {row[headerIndex]}
+                </TableCell>
+              )}
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

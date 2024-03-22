@@ -75,15 +75,15 @@ function ViewTabs(props: ViewTabsProps) {
       '#',
       ...filterFieldsForTable(props.fieldsSettings).map((s: FieldSettings) => s.label || '')
     ])
-    // setTableRows([])
+    setTableRows([])
   }, [props.fieldsSettings])
   const [responsesCount, setResponsesCount] = React.useState<number>(0);
   const [tableHeaders, setTableHeaders] = React.useState<string[]>(
     filterFieldsForTable(props.fieldsSettings).map((s: FieldSettings, i: string) => (s.label || ''))
   );
-  const [tableRows, setTableRows] = React.useState<{ [id: string]: string }>({});
+  const [tableRows, setTableRows] = React.useState<string [][]>([]);
   const [open, setOpen] = React.useState(false);
-  const descriptionElementRef = React.useRef<HTMLElement>(null);
+  const descriptionElementRef = React.useRef<HTMLElement | null>(null);
   React.useEffect(() => {
     if (open) {
       const {current: descriptionElement} = descriptionElementRef;
@@ -108,9 +108,12 @@ function ViewTabs(props: ViewTabsProps) {
   };
 
   function handleFormSubmit(newValues: FieldViewListType): void {
-    // newValues.reduce()
-    // tableRows.push([new Date().toLocaleString(), ...newValues])
-    // setTableRows([...tableRows])
+    let newRow = [new Date().toLocaleString()]
+    Object.keys(newValues).forEach((id: string) => {
+      newRow.push(newValues[id])
+    })
+
+    setTableRows([...tableRows, newRow])
     setResponsesCount(responsesCount + 1)
   }
 
