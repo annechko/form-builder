@@ -19,10 +19,21 @@ import {ResponsesTable} from "./components/view/ResponsesTable";
 import {FormView} from "./components/view/FormView";
 import {FieldViewListType} from "./components/view/FieldView";
 
+
+enum TabConfigIds {
+  Fields = 0,
+  FormSettings = 1,
+}
+
+enum TabViewIds {
+  Preview = 0,
+  Responses = 1,
+}
+
 interface AppTabPanelProps {
   children?: React.ReactNode;
-  index: number;
-  value: number;
+  index: TabConfigIds | TabViewIds,
+  value: TabConfigIds | TabViewIds,
 }
 
 function AppTabPanel(props: AppTabPanelProps) {
@@ -52,10 +63,10 @@ function AppTabPanel(props: AppTabPanelProps) {
   );
 }
 
-function a11yProps(index: number) {
+function tabProps(index: TabConfigIds | TabViewIds) {
   return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    id: `tab-${index}`,
+    'aria-controls': `tabpanel-${index}`,
   };
 }
 
@@ -69,7 +80,7 @@ function filterFieldsForTable(fieldsSettings: FieldSettingsList): FieldSettingsL
 }
 
 function ViewTabs(props: ViewTabsProps) {
-  const [selectedTabIndex, setSelectedTabIndex] = React.useState(0);
+  const [selectedTabIndex, setSelectedTabIndex] = React.useState<TabViewIds>(TabViewIds.Preview);
   React.useEffect(() => {
     setTableHeaders([
       '#',
@@ -77,7 +88,7 @@ function ViewTabs(props: ViewTabsProps) {
     ])
     setTableRows([])
   }, [props.fieldsSettings])
-  const [responsesCount, setResponsesCount] = React.useState<number>(0);
+  const [newResponsesCount, setNewResponsesCount] = React.useState<number>(0);
   const [tableHeaders, setTableHeaders] = React.useState<string[]>(
     filterFieldsForTable(props.fieldsSettings).map((s: FieldSettings, i: string) => (s.label || ''))
   );
@@ -92,10 +103,10 @@ function ViewTabs(props: ViewTabsProps) {
       }
     }
   }, [open]);
-  const onTabSelected = (event: React.SyntheticEvent, newValue: number) => {
+  const onTabSelected = (event: React.SyntheticEvent, newValue: TabViewIds) => {
     setSelectedTabIndex(newValue);
-    if (newValue === 1) {
-      setResponsesCount(0)
+    if (newValue === TabViewIds.Responses) {
+      setNewResponsesCount(0)
     }
   };
 
@@ -114,24 +125,25 @@ function ViewTabs(props: ViewTabsProps) {
     })
 
     setTableRows([...tableRows, newRow])
-    setResponsesCount(responsesCount + 1)
+    setNewResponsesCount(newResponsesCount + 1)
   }
 
   return (
     <Box className={styles.card}>
       <Box sx={{borderBottom: 1, borderColor: 'divider', p: 0}}>
         <Tabs value={selectedTabIndex} onChange={onTabSelected} aria-label="basic tabs example">
-          <Tab label="Preview" {...a11yProps(0)} sx={{textTransform: 'none',}}/>
+          <Tab label="Preview" {...tabProps(TabViewIds.Preview)} sx={{textTransform: 'none',}}/>
 
           <Tab label={
-            <Badge variant="dot" badgeContent={responsesCount} color="primary" {...a11yProps(1)}
+            <Badge variant="dot" badgeContent={newResponsesCount} color="primary"
+              {...tabProps(TabViewIds.Responses)}
               sx={{textTransform: 'none',}}>
               Responses
             </Badge>}/>
 
         </Tabs>
       </Box>
-      <AppTabPanel value={selectedTabIndex} index={0}>
+      <AppTabPanel value={selectedTabIndex} index={TabViewIds.Preview}>
         <React.Fragment>
           <Box mt={0}
             display="flex"
@@ -188,7 +200,7 @@ function ViewTabs(props: ViewTabsProps) {
           onSubmit={handleFormSubmit}
         />
       </AppTabPanel>
-      <AppTabPanel value={selectedTabIndex} index={1}>
+      <AppTabPanel value={selectedTabIndex} index={TabViewIds.Responses}>
         <ResponsesTable headers={tableHeaders} rows={tableRows}/>
       </AppTabPanel>
 
@@ -198,34 +210,34 @@ function ViewTabs(props: ViewTabsProps) {
 
 type ConfigTabsProps = {
   onFieldsSettingsChanged: (newSettings: FieldSettingsList) => void,
-  onStyleSelected: (event: React.ChangeEvent, value: string) => void,
+  onFormStyleChanged: (event: React.ChangeEvent, value: string) => void,
   formStyle: TextFieldVariants,
 }
 
 function ConfigTabs(props: ConfigTabsProps) {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState<TabConfigIds>(TabConfigIds.Fields);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (event: React.SyntheticEvent, newValue: TabConfigIds) => {
     setValue(newValue);
   };
 
   return (
     <Box className={styles.card}>
       <Box sx={{borderBottom: 1, borderColor: 'divider', p: 0}}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Configure" {...a11yProps(0)} sx={{textTransform: 'none',}}/>
-          <Tab label="Form settings" {...a11yProps(1)} sx={{textTransform: 'none',}}/>
+        <Tabs value={value} onChange={handleTabChange} aria-label="basic tabs example">
+          <Tab label="Configure" {...tabProps(TabConfigIds.Fields)} sx={{textTransform: 'none',}}/>
+          <Tab label="Form settings" {...tabProps(TabConfigIds.FormSettings)} sx={{textTransform: 'none',}}/>
         </Tabs>
       </Box>
 
-      <AppTabPanel value={value} index={0}>
+      <AppTabPanel value={value} index={TabConfigIds.Fields}>
         <FormConfiguration
           onFieldsSettingsChanged={props.onFieldsSettingsChanged}
         />
       </AppTabPanel>
 
-      <AppTabPanel value={value} index={1}>
-        <FormSettings onStyleSelected={props.onStyleSelected} formStyle={props.formStyle}/>
+      <AppTabPanel value={value} index={TabConfigIds.FormSettings}>
+        <FormSettings onStyleSelected={props.onFormStyleChanged} formStyle={props.formStyle}/>
       </AppTabPanel>
 
     </Box>
@@ -236,7 +248,7 @@ export default function App() {
   const [formStyle, setFormStyle] = React.useState<TextFieldVariants>('filled');
   const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettingsList>(new FieldSettingsList());
 
-  function onStyleSelected(event: React.ChangeEvent, value: string) {
+  function onFormStyleChanged(event: React.ChangeEvent, value: string) {
     setFormStyle(value as TextFieldVariants)
   }
 
@@ -248,7 +260,7 @@ export default function App() {
     <div className={styles.content}>
       <ConfigTabs {...{
         formStyle,
-        onStyleSelected,
+        onFormStyleChanged,
         onFieldsSettingsChanged
       }}/>
       <ViewTabs {...{fieldsSettings, formStyle}}/>
