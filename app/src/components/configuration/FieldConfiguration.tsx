@@ -19,7 +19,7 @@ export enum FieldType {
 export type FieldSettings = {
   type: FieldType,
   label?: string,
-  isRequired?: boolean,
+  isRequired?: boolean, // todo not for all fields
 };
 
 export type FieldConfigurationProps = {
@@ -186,10 +186,10 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
       </FormControl>
     </Stack>
     <Stack direction="row" justifyContent="flex-end" spacing={0} sx={{mt: 1}}>
-      <FormControlLabel sx={{m: 0, fontSize: "0.8rem"}}
-        componentsProps={{typography: {sx: {fontSize: "0.8rem"}}}}
-        control={<Checkbox size="small" onChange={handleRequiredChange} sx={{p: 0.5}}/>}
-        label="Required"/>
+      {settings.type !== FieldType.title && <FormControlLabel sx={{m: 0, fontSize: "0.8rem"}}
+          componentsProps={{typography: {sx: {fontSize: "0.8rem"}}}}
+          control={<Checkbox size="small" onChange={handleRequiredChange} sx={{p: 0.5}}/>}
+          label="Required"/>}
       <LongMenu onDelete={configProps.onFieldDeleted}/>
     </Stack>
   </div>
