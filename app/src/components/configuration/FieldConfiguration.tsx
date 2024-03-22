@@ -8,6 +8,80 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {Checkbox, FormControlLabel, Stack} from "@mui/material";
+import {nanoid} from "nanoid";
+
+export enum FieldType {
+  input = "input",
+  textarea = "textarea",
+  title = "title",
+}
+
+export type FieldSettings = {
+  type: FieldType,
+  label?: string,
+  isRequired?: boolean,
+};
+
+export type FieldConfigurationProps = {
+  settings: FieldSettings,
+  onSettingsChanged?: (newSettings: FieldSettings) => void,
+  onFieldDeleted?: () => void,
+};
+
+export class FieldSettingsList {
+  _values: FieldSettingsListType
+
+  constructor(v: FieldSettingsListType = {}) {
+    this._values = {...v}
+  }
+
+  add(s: FieldSettings): void {
+    this._values[nanoid()] = s
+  }
+
+  get values(): FieldSettingsListType {
+    return this._values;
+  }
+
+  clone(): FieldSettingsList {
+    return new FieldSettingsList(this.values)
+  }
+
+  update(id: string, newFieldSettings: FieldSettings) {
+    this._values[id] = newFieldSettings
+  }
+
+  remove(id: string) {
+    delete this._values[id]
+  }
+
+  map<U>(callback: (s: FieldSettings, id: string) => U): U[] {
+    type Values<U> = U[keyof U]
+    let newValues:Values[] = [];
+    Object.keys(this.values).forEach(function (this:  FieldSettingsList,id: string) {
+      newValues.push(callback(this._values[id], id))
+    });
+    return newValues
+  }
+
+  reduce(this:  FieldSettingsList,callback: (s: FieldSettings, id: string) => boolean): FieldSettingsList {
+    let newList: FieldSettingsListType = {}
+    Object.keys(this.values).forEach(function (this:  FieldSettingsList,id: string) {
+      if (callback(this._values[id], id)) {
+        newList[id] = this._values[id]
+      }
+    });
+    return new FieldSettingsList(newList)
+  }
+
+  length(): number {
+    return Object.keys(this.values).length
+  }
+}
+
+export type FieldSettingsListType = {
+  [id: string]: FieldSettings
+}
 
 const options = [
   'Delete',
@@ -67,24 +141,6 @@ function LongMenu(props: { onDelete?: Function }) {
     </div>
   );
 }
-
-export enum FieldType {
-  input = "input",
-  textarea = "textarea",
-  title = "title",
-}
-
-export type FieldSettings = {
-  type: FieldType,
-  label?: string,
-  isRequired?: boolean,
-};
-
-export type FieldConfigurationProps = {
-  settings: FieldSettings,
-  onSettingsChanged?: (newSettings: FieldSettings) => void,
-  onFieldDeleted?: () => void,
-};
 
 export function FieldConfiguration(configProps: FieldConfigurationProps) {
   const [settings, setSettings] = React.useState<FieldSettings>(configProps.settings);

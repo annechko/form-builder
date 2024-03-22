@@ -1,6 +1,10 @@
 import * as React from 'react';
 import styles from './App.module.css';
-import {FieldSettings, FieldType} from "./components/configuration/FieldConfiguration";
+import {
+  FieldSettings,
+  FieldSettingsList,
+  FieldType
+} from "./components/configuration/FieldConfiguration";
 import CloseIcon from '@mui/icons-material/Close';
 import ZoomOutMapSharpIcon from '@mui/icons-material/ZoomOutMapSharp';
 import {Badge, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
@@ -13,6 +17,8 @@ import {FormSettings} from "./components/configuration/FormSettings";
 import {FormConfiguration} from "./components/configuration/FormConfiguration";
 import {ResponsesTable} from "./components/view/ResponsesTable";
 import {FormView} from "./components/view/FormView";
+import {nanoid} from 'nanoid'
+import {FieldViewListType} from "./components/view/FieldView";
 
 interface AppTabPanelProps {
   children?: React.ReactNode;
@@ -56,18 +62,25 @@ function a11yProps(index: number) {
 
 type ViewTabsProps = {
   formStyle: TextFieldVariants,
-  fieldsSettings: FieldSettings[],
+  fieldsSettings: FieldSettingsList
+}
+
+function filterFieldsForTable(fieldsSettings: FieldSettingsList): FieldSettingsList {
+  return fieldsSettings.reduce((s: FieldSettings) => s.type !== FieldType.title);
 }
 
 function ViewTabs(props: ViewTabsProps) {
   const [selectedTabIndex, setSelectedTabIndex] = React.useState(0);
   React.useEffect(() => {
-    setTableHeaders(['#', ...props.fieldsSettings.map((s: FieldSettings) => s.label || '')])
+    setTableHeaders([
+      '#',
+      ...filterFieldsForTable(props.fieldsSettings).map((s: FieldSettings) => s.label || '')
+    ])
     setTableRows([])
   }, [props.fieldsSettings])
   const [responsesCount, setResponsesCount] = React.useState<number>(0);
   const [tableHeaders, setTableHeaders] = React.useState<string[]>(
-    props.fieldsSettings.map((s: FieldSettings, i: number) => (s.label || '') + i)
+    filterFieldsForTable(props.fieldsSettings).map((s: FieldSettings, i: string) => (s.label || ''))
   );
   const [tableRows, setTableRows] = React.useState<string[][]>([]);
   const [open, setOpen] = React.useState(false);
@@ -94,6 +107,12 @@ function ViewTabs(props: ViewTabsProps) {
   const handleClose = () => {
     setOpen(false);
   };
+
+  function handleFormSubmit(newValues: FieldViewListType) {
+    tableRows.push([new Date().toLocaleString(), ...newValues])
+    setTableRows([...tableRows])
+    setResponsesCount(responsesCount + 1)
+  }
 
   return (
     <Box className={styles.card}>
@@ -154,8 +173,7 @@ function ViewTabs(props: ViewTabsProps) {
               tabIndex={-1}
             >
               <FormView formStyle={props.formStyle} fieldsSettings={props.fieldsSettings}
-                responsesCount={responsesCount} tableRows={tableRows}
-                setTableRows={setTableRows} setResponsesCount={setResponsesCount}
+                onSubmit={handleFormSubmit}
               />
             </DialogContent>
             <DialogActions>
@@ -164,8 +182,7 @@ function ViewTabs(props: ViewTabsProps) {
           </Dialog>
         </React.Fragment>
         <FormView formStyle={props.formStyle} fieldsSettings={props.fieldsSettings}
-          responsesCount={responsesCount} tableRows={tableRows}
-          setTableRows={setTableRows} setResponsesCount={setResponsesCount}
+          onSubmit={handleFormSubmit}
         />
       </AppTabPanel>
       <AppTabPanel value={selectedTabIndex} index={1}>
@@ -177,10 +194,9 @@ function ViewTabs(props: ViewTabsProps) {
 }
 
 type ConfigTabsProps = {
-  fieldsSettings: FieldSettings[],
-  onFieldSettingsChanged: (index: number) => (newFieldSettings: FieldSettings) => void,
-  onFieldDeleted: (i: number) => () => void,
-  fieldsCount: number,
+  fieldsSettings: FieldSettingsList,
+  onFieldSettingsChanged: (id: string) => (newFieldSettings: FieldSettings) => void,
+  onFieldDeleted: (id: string/* todo type FieldId*/) => () => void,
   onAddField: (event: object) => void,
   onStyleSelected: (event: React.ChangeEvent, value: string) => void,
   formStyle: TextFieldVariants,
@@ -220,45 +236,33 @@ function ConfigTabs(props: ConfigTabsProps) {
 
 export default function App() {
   const defaultSettings: FieldSettings = {type: FieldType.input, label: 'Field'}
-  const defaultFieldsSettings: FieldSettings[] = [
-    {type: FieldType.title, label: 'New Form Title'},
-    defaultSettings,
-  ]
+  let defaultFieldsSettings: FieldSettingsList = new FieldSettingsList()
+  defaultFieldsSettings.add({type: FieldType.title, label: 'New Form Title'})
+  defaultFieldsSettings.add(defaultSettings)
+
   const [formStyle, setFormStyle] = React.useState<TextFieldVariants>('filled');
-  const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettings[]>(defaultFieldsSettings);
+  const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettingsList>(defaultFieldsSettings);
 
   function onStyleSelected(event: React.ChangeEvent, value: string) {
     setFormStyle(value as TextFieldVariants)
   }
 
   const onAddField = (event: object) => {
-    setFieldsSettings([...fieldsSettings, defaultSettings])
+    fieldsSettings.add(defaultSettings)
+    setFieldsSettings(fieldsSettings.clone())
   }
-  const onFieldSettingsChanged = (index: number) => {
+  const onFieldSettingsChanged = (id: string) => {
     return (newFieldSettings: FieldSettings) => {
-      const newSettings: FieldSettings[] = []
-      for (let i = 0; i < fieldsSettings.length; i++) {
-        if (i === index) {
-          newSettings.push(newFieldSettings)
-        } else {
-          newSettings.push(fieldsSettings[i])
-        }
-      }
-      setFieldsSettings(newSettings)
+      fieldsSettings.update(id, newFieldSettings)
+      setFieldsSettings(fieldsSettings.clone())
     }
   }
-  const onFieldDeleted = (index: number) => {
+  const onFieldDeleted = (id: string) => {
     return () => {
-      const newSettings: FieldSettings[] = []
-      for (let i = 0; i < fieldsSettings.length; i++) {
-        if (i !== index) {
-          newSettings.push(fieldsSettings[i])
-        }
-      }
-      setFieldsSettings(newSettings)
+      fieldsSettings.remove(id)
+      setFieldsSettings(fieldsSettings.clone())
     }
   }
-  const fieldsCount: number = fieldsSettings.length
 
   return (
     <div className={styles.content}>
@@ -266,7 +270,6 @@ export default function App() {
         onStyleSelected,
         formStyle,
         fieldsSettings,
-        fieldsCount,
         onAddField,
         onFieldDeleted,
         onFieldSettingsChanged

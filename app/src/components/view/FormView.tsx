@@ -1,31 +1,31 @@
 import * as React from "react";
-import {FieldSettings} from "../configuration/FieldConfiguration";
+import {FieldSettings, FieldSettingsList, FieldType} from "../configuration/FieldConfiguration";
 import {Box, Button} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {FieldView} from "./FieldView";
+import {FieldView, FieldViewListType} from "./FieldView";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
 
 type FormViewProps = {
-  responsesCount: number;
   formStyle: TextFieldVariants,
-  fieldsSettings: FieldSettings[],
-  tableRows: string[][],
-  setTableRows: (tableRows: string[][]) => void,
-  setResponsesCount: (n: number) => void,
+  fieldsSettings: FieldSettingsList,
+  onSubmit: (fieldValues: FieldViewListType) => void;
 }
 export type FieldsValueErrors = { [index: string]: { message: string } }
 
 export function FormView(props: FormViewProps) {
-  const [fieldValues, setFieldValues] = React.useState<string[]>([]);
+  const [fieldValues, setFieldValues] = React.useState<FieldViewListType>({});
   const [errors, setErrors] = React.useState<FieldsValueErrors>({});
 
   function validateValues(
-    fieldValues: string[],
-    fieldsSettings: FieldSettings[]): FieldsValueErrors {
+    fieldValues: FieldViewListType,
+    fieldsSettings: FieldSettingsList): FieldsValueErrors {
     let _errors: FieldsValueErrors = {};
-    fieldsSettings.forEach((settings: FieldSettings, index: number) => {
-      if (settings.isRequired && (fieldValues[index] === '' || fieldValues[index] === undefined)) {
-        _errors[index] = {message: 'Required field'}
+    fieldsSettings.map((settings: FieldSettings, id: string) => {
+      if (settings.type === FieldType.title) {
+        return;
+      }
+      if (settings.isRequired && (fieldValues[id] === '' || fieldValues[id] === undefined)) {
+        _errors[id] = {message: 'Required field'}
       }
     })
 
@@ -36,18 +36,16 @@ export function FormView(props: FormViewProps) {
     const errorsUpdated = validateValues(fieldValues, props.fieldsSettings)
     setErrors(errorsUpdated)
     if (Object.keys(errorsUpdated).length === 0) {
-      props.tableRows.push([new Date().toLocaleString(), ...fieldValues])
-      props.setTableRows([...props.tableRows])
-      setFieldValues([])
-      props.setResponsesCount(props.responsesCount + 1)
+      props.onSubmit(fieldValues)
+      setFieldValues({})
     }
   };
 
-  function onFieldValueChange(fieldIndex: number) {
+  function onFieldValueChange(fieldId: string) {
     return (event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       if (event) {
-        fieldValues[fieldIndex] = event.target.value
-        setFieldValues([...fieldValues])
+        fieldValues[fieldId] = event.target.value
+        setFieldValues({...fieldValues})
       }
     }
   }
@@ -59,12 +57,12 @@ export function FormView(props: FormViewProps) {
     >
       <form style={{minWidth: "30vw"}}>
         <Typography variant="body1" component="div">
-          {props.fieldsSettings.map((s: FieldSettings, i: number) => (
-            <div key={i}>
+          {props.fieldsSettings.map((s: FieldSettings, id: string) => (
+            <div key={id}>
               <Box component="section" sx={{pr: 0, pl: 0}}>
-                <FieldView settings={s} onChange={onFieldValueChange(i)} value={fieldValues[i]}
+                <FieldView settings={s} onChange={onFieldValueChange(id)} value={fieldValues[id]}
                   variant={props.formStyle}
-                  error={errors[i]}/>
+                  error={errors[id]}/>
               </Box>
             </div>
           ))}
@@ -75,7 +73,7 @@ export function FormView(props: FormViewProps) {
           justifyContent="center"
         >
           <Button variant="contained" onClick={onSubmitResponse}
-            disabled={props.fieldsSettings.length === 0}>Test Submit</Button>
+            disabled={props.fieldsSettings.length() === 0}>Test Submit</Button>
 
         </Box>
       </form>
