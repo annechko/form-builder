@@ -29,18 +29,18 @@ export type FieldConfigurationProps = {
 };
 
 export class FieldSettingsList {
-  _values: FieldSettingsListType
-
   constructor(v: FieldSettingsListType = {}) {
     this._values = {...v}
   }
 
-  add(s: FieldSettings): void {
-    this._values[nanoid()] = s
-  }
+  _values: FieldSettingsListType
 
   get values(): FieldSettingsListType {
     return this._values;
+  }
+
+  add(s: FieldSettings): void {
+    this._values[nanoid()] = s
   }
 
   clone(): FieldSettingsList {
@@ -187,9 +187,9 @@ export function FieldConfiguration(configProps: FieldConfigurationProps) {
     </Stack>
     <Stack direction="row" justifyContent="flex-end" spacing={0} sx={{mt: 1}}>
       {settings.type !== FieldType.title && <FormControlLabel sx={{m: 0, fontSize: "0.8rem"}}
-          componentsProps={{typography: {sx: {fontSize: "0.8rem"}}}}
-          control={<Checkbox size="small" onChange={handleRequiredChange} sx={{p: 0.5}}/>}
-          label="Required"/>}
+        componentsProps={{typography: {sx: {fontSize: "0.8rem"}}}}
+        control={<Checkbox size="small" onChange={handleRequiredChange} sx={{p: 0.5}}/>}
+        label="Required"/>}
       <LongMenu onDelete={configProps.onFieldDeleted}/>
     </Stack>
   </div>
