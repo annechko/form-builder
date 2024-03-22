@@ -198,9 +198,7 @@ function ViewTabs(props: ViewTabsProps) {
 
 type ConfigTabsProps = {
   fieldsSettings: FieldSettingsList,
-  onFieldSettingsChanged: (id: string) => (newFieldSettings: FieldSettings) => void,
-  onFieldDeleted: (id: string/* todo type FieldId*/) => () => void,
-  onFieldAdded: (event: object) => void,
+  setFieldsSettings: (newSettings: FieldSettingsList) => void,
   onStyleSelected: (event: React.ChangeEvent, value: string) => void,
   formStyle: TextFieldVariants,
 }
@@ -222,10 +220,9 @@ function ConfigTabs(props: ConfigTabsProps) {
       </Box>
 
       <AppTabPanel value={value} index={0}>
-        <FormConfiguration fieldsSettings={props.fieldsSettings}
-          onFieldSettingsChanged={props.onFieldSettingsChanged}
-          onFieldAdded={props.onFieldAdded}
-          onFieldDeleted={props.onFieldDeleted}
+        <FormConfiguration
+          fieldsSettings={props.fieldsSettings}
+          onFieldsSettingsChanged={props.setFieldsSettings}
         />
       </AppTabPanel>
 
@@ -250,32 +247,13 @@ export default function App() {
     setFormStyle(value as TextFieldVariants)
   }
 
-  const onFieldAdded = (event: object) => {
-    fieldsSettings.add(defaultSettings)
-    setFieldsSettings(fieldsSettings.clone())
-  }
-  const onFieldSettingsChanged = (id: string) => {
-    return (newFieldSettings: FieldSettings) => {
-      fieldsSettings.update(id, newFieldSettings)
-      setFieldsSettings(fieldsSettings.clone())
-    }
-  }
-  const onFieldDeleted = (id: string) => {
-    return () => {
-      fieldsSettings.remove(id)
-      setFieldsSettings(fieldsSettings.clone())
-    }
-  }
-
   return (
     <div className={styles.content}>
       <ConfigTabs {...{
-        onStyleSelected,
         formStyle,
+        onStyleSelected,
         fieldsSettings,
-        onFieldAdded,
-        onFieldDeleted,
-        onFieldSettingsChanged
+        setFieldsSettings
       }}/>
       <ViewTabs {...{fieldsSettings, formStyle}}/>
     </div>
