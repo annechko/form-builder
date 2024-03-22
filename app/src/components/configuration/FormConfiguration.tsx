@@ -11,14 +11,20 @@ import AddIcon from "@mui/icons-material/Add";
 import * as React from "react";
 
 type FormConfigurationProps = {
-  fieldsSettings: FieldSettingsList,
   onFieldsSettingsChanged: (newFieldSettings: FieldSettingsList) => void,
 }
 
 export function FormConfiguration(props: FormConfigurationProps) {
-  const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettingsList>(props.fieldsSettings);
   const defaultSettings: FieldSettings = {type: FieldType.input, label: 'Field'}
 
+  let defaultFieldsSettings: FieldSettingsList = new FieldSettingsList({})
+  defaultFieldsSettings.add({type: FieldType.title, label: 'New Form Title'})
+  defaultFieldsSettings.add(defaultSettings)
+
+  const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettingsList>(defaultFieldsSettings);
+  React.useEffect(() => {
+    props.onFieldsSettingsChanged(fieldsSettings)
+  }, [props])
   const updateSettings = (s: FieldSettingsList) => {
     const newSettings = s.clone()
     setFieldsSettings(newSettings)

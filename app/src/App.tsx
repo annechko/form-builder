@@ -197,8 +197,7 @@ function ViewTabs(props: ViewTabsProps) {
 }
 
 type ConfigTabsProps = {
-  fieldsSettings: FieldSettingsList,
-  setFieldsSettings: (newSettings: FieldSettingsList) => void,
+  onFieldsSettingsChanged: (newSettings: FieldSettingsList) => void,
   onStyleSelected: (event: React.ChangeEvent, value: string) => void,
   formStyle: TextFieldVariants,
 }
@@ -221,8 +220,7 @@ function ConfigTabs(props: ConfigTabsProps) {
 
       <AppTabPanel value={value} index={0}>
         <FormConfiguration
-          fieldsSettings={props.fieldsSettings}
-          onFieldsSettingsChanged={props.setFieldsSettings}
+          onFieldsSettingsChanged={props.onFieldsSettingsChanged}
         />
       </AppTabPanel>
 
@@ -235,16 +233,15 @@ function ConfigTabs(props: ConfigTabsProps) {
 }
 
 export default function App() {
-  const defaultSettings: FieldSettings = {type: FieldType.input, label: 'Field'}
-  let defaultFieldsSettings: FieldSettingsList = new FieldSettingsList({})
-  defaultFieldsSettings.add({type: FieldType.title, label: 'New Form Title'})
-  defaultFieldsSettings.add(defaultSettings)
-
   const [formStyle, setFormStyle] = React.useState<TextFieldVariants>('filled');
-  const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettingsList>(defaultFieldsSettings);
+  const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettingsList>(new FieldSettingsList());
 
   function onStyleSelected(event: React.ChangeEvent, value: string) {
     setFormStyle(value as TextFieldVariants)
+  }
+
+  function onFieldsSettingsChanged(settings: FieldSettingsList) {
+    setFieldsSettings(settings)
   }
 
   return (
@@ -252,8 +249,7 @@ export default function App() {
       <ConfigTabs {...{
         formStyle,
         onStyleSelected,
-        fieldsSettings,
-        setFieldsSettings
+        onFieldsSettingsChanged
       }}/>
       <ViewTabs {...{fieldsSettings, formStyle}}/>
     </div>
