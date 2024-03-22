@@ -9,7 +9,7 @@ type FormConfigurationProps = {
   fieldsSettings: FieldSettingsList,
   onFieldSettingsChanged: (id: string) => (newFieldSettings: FieldSettings) => void,
   onFieldDeleted: (id: string) => () => void,
-  onAddField: (event: object) => void,
+  onFieldAdded: (event: object) => void,
 }
 
 export function FormConfiguration(props: FormConfigurationProps) {
@@ -30,7 +30,7 @@ export function FormConfiguration(props: FormConfigurationProps) {
           <Divider/>
         </div>
       ))}
-      <IconButton aria-label="delete" onClick={props.onAddField}>
+      <IconButton aria-label="delete" onClick={props.onFieldAdded}>
         <AddIcon/>
       </IconButton>
     </Typography>
