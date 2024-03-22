@@ -1,16 +1,14 @@
 docker-down:
 	docker-compose down --remove-orphans
-docker-up:
-	docker-compose up -d --remove-orphans
 
 start:
-	docker-compose run --rm -p "3000:3000" node npm start
+	docker-compose run --rm -p "3000:3000" fb-node npm start
 
-app-build:
-	docker-compose run --rm node npm run build
+app-install:
+	docker-compose run --rm fb-node npm i
 
 ci-build:
-	docker-compose run --rm node npm i
-	docker-compose run --rm node npm run build
+	docker-compose run --rm fb-node npm i
+	docker-compose run --rm fb-node npm run build
 
-init: docker-down docker-up start
+init: docker-down app-install start

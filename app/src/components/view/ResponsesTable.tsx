@@ -19,7 +19,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 type ResponsesTableProps = {
   headers: string[],
-  rows: string[][],
+  rows: string[][]
 }
 
 export function ResponsesTable(props: ResponsesTableProps) {
@@ -51,7 +51,8 @@ export function ResponsesTable(props: ResponsesTableProps) {
               key={i}
             >
               {props.headers.map((header, headerIndex) =>
-                <TableCell component={headerIndex === 0 ? "th" : "td"} scope="row" key={i + '' + headerIndex}
+                <TableCell component={headerIndex === 0 ? "th" : "td"} scope="row"
+                  key={i + '' + headerIndex}
                   sx={{border: '1px solid rgba(224, 224, 224, 1)'}}>
                   {row[headerIndex]}
                 </TableCell>

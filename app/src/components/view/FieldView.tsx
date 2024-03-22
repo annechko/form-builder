@@ -13,6 +13,10 @@ export type FieldViewProps = {
   error?: { message: string },
 };
 
+export type FieldViewListType = {
+  [id: string]: string
+}
+
 export function FieldView(viewProps: FieldViewProps) {
   const settings = viewProps.settings
   const [value, setValue] = React.useState<string>(viewProps.value || '');
