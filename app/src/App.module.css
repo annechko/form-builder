@@ -1,7 +1,8 @@
 .card {
 	height: fit-content;
 	min-height: 70vh;
-	min-width: 30vw;
+	min-width: 35vw;
+	max-width: 35vw;
 	background-color: #fff;
 }
 
