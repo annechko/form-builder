@@ -12,7 +12,6 @@ type ViewTabsProps = {
   fieldsSettings: FieldSettingsList
 }
 
-
 export function ViewTabs(props: ViewTabsProps) {
   const [newResponsesCount, setNewResponsesCount] = React.useState<number>(0);
   const [formValues, setFormValues] = React.useState<ResponsesViewValuesType[]>([]);

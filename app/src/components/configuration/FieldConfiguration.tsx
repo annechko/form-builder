@@ -22,12 +22,6 @@ export type FieldSettings = {
   isRequired?: boolean, // todo not for all fields
 };
 
-export type FieldConfigurationProps = {
-  settings: FieldSettings,
-  onSettingsChanged?: (newSettings: FieldSettings) => void,
-  onFieldDeleted?: () => void,
-};
-
 export class FieldSettingsList {
   constructor(v: FieldSettingsListType = {}) {
     this._values = {...v}
@@ -88,8 +82,6 @@ const options = [
   'Delete',
 ];
 
-const ITEM_HEIGHT = 48;
-
 function LongMenu(props: { onDelete?: Function }) {
   const {onDelete} = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -127,7 +119,7 @@ function LongMenu(props: { onDelete?: Function }) {
         slotProps={{
           paper: {
             style: {
-              maxHeight: ITEM_HEIGHT * 4.5,
+              maxHeight: 48 * 4.5,
               width: '20ch',
             },
           }
@@ -142,6 +134,12 @@ function LongMenu(props: { onDelete?: Function }) {
     </div>
   );
 }
+
+export type FieldConfigurationProps = {
+  settings: FieldSettings,
+  onSettingsChanged?: (newSettings: FieldSettings) => void,
+  onFieldDeleted?: () => void,
+};
 
 export function FieldConfiguration(configProps: FieldConfigurationProps) {
   const [settings, setSettings] = React.useState<FieldSettings>(configProps.settings);
