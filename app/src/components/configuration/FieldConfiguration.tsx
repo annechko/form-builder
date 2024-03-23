@@ -8,7 +8,6 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {Checkbox, FormControlLabel, Stack} from "@mui/material";
-import {nanoid} from "nanoid";
 
 export enum FieldType {
   input = "input",
@@ -17,6 +16,7 @@ export enum FieldType {
 }
 
 export type FieldSettings = {
+  id: string,
   type: FieldType,
   label?: string,
   isRequired?: boolean, // todo not for all fields
@@ -40,7 +40,7 @@ export class FieldSettingsList {
   }
 
   add(s: FieldSettings): void {
-    this._values[nanoid()] = s
+    this._values[s.id] = s
   }
 
   clone(): FieldSettingsList {

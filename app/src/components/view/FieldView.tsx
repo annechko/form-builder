@@ -4,6 +4,10 @@ import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
 
+export type FieldViewListType = {
+  [id: string]: string
+}
+
 export const FieldViewStyles = ['outlined', 'standard', 'filled']
 export type FieldViewProps = {
   settings: FieldSettings,
@@ -13,20 +17,16 @@ export type FieldViewProps = {
   error?: { message: string },
 };
 
-export type FieldViewListType = {
-  [id: string]: string
-}
-
-export function FieldView(viewProps: FieldViewProps) {
-  const settings = viewProps.settings
-  const [value, setValue] = React.useState<string>(viewProps.value || '');
-  const [error, setError] = React.useState<string | undefined>(viewProps.error?.message);
+export function FieldView(props: FieldViewProps) {
+  const settings = props.settings
+  const [value, setValue] = React.useState<string>(props.value || '');
+  const [error, setError] = React.useState<string | undefined>(props.error?.message);
   React.useEffect(() => {
-    setValue(viewProps.value || '')
-  }, [viewProps.value])
+    setValue(props.value || '')
+  }, [props.value])
   React.useEffect(() => {
-    setError(viewProps.error?.message)
-  }, [viewProps.error])
+    setError(props.error?.message)
+  }, [props.error])
   if (settings.type === FieldType.title) {
     return <>
       <h3 style={{
@@ -44,9 +44,9 @@ export function FieldView(viewProps: FieldViewProps) {
   return <div>
     <FormControl fullWidth sx={{p: 0, pb: 1}}>
       <TextField id="outlined-basic" label={settings.label}
-        variant={viewProps.variant}
+        variant={props.variant}
         size="small"
-        onBlur={viewProps.onChange}
+        onBlur={props.onChange}
         value={value}
         onChange={handleValueChange}
         required={settings.isRequired === true}

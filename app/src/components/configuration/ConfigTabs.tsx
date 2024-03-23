@@ -4,6 +4,7 @@ import {FormSettings} from "./FormSettings";
 import {FieldSettings, FieldSettingsList, FieldType} from "./FieldConfiguration";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
 import {AppTabs, SingleTabType, TabConfigIds} from "../common/AppTabs";
+import {nanoid} from "nanoid";
 
 type ConfigTabsProps = {
   onFieldsSettingsChanged: (newSettings: FieldSettingsList) => void,
@@ -12,11 +13,13 @@ type ConfigTabsProps = {
 }
 
 export function ConfigTabs(props: ConfigTabsProps) {
-  const defaultSettings: FieldSettings = {type: FieldType.input, label: 'Field'}
+  function defaultSettings(): FieldSettings {
+    return {id: nanoid(), type: FieldType.input, label: 'Field'};
+  }
 
   let defaultFieldsSettings: FieldSettingsList = new FieldSettingsList({})
-  defaultFieldsSettings.add({type: FieldType.title, label: 'New Form Title'})
-  defaultFieldsSettings.add(defaultSettings)
+  defaultFieldsSettings.add({id: nanoid(), type: FieldType.title, label: 'New Form Title'})
+  defaultFieldsSettings.add(defaultSettings())
 
   const [fieldsSettings, setFieldsSettings] = React.useState<FieldSettingsList>(defaultFieldsSettings);
   React.useEffect(() => {
@@ -28,7 +31,7 @@ export function ConfigTabs(props: ConfigTabsProps) {
     props.onFieldsSettingsChanged(newSettings)
   }
   const onFieldAdded = (event: object) => {
-    fieldsSettings.add(defaultSettings)
+    fieldsSettings.add(defaultSettings())
     updateSettings(fieldsSettings)
   }
   const onFieldSettingsChanged = (id: string) => {
