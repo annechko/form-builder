@@ -2,24 +2,15 @@ import styles from "../../App.module.css";
 import {Box} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-
-export enum TabConfigIds {
-  Fields = 0,
-  FormSettings = 1,
-}
-
-export enum TabViewIds {
-  Preview = 0,
-  Responses = 1,
-}
+import {TabViewIds} from "./AppTabs";
 
 export interface AppTabPanelProps {
   children?: React.ReactNode;
-  index: TabConfigIds | TabViewIds,
-  value: TabConfigIds | TabViewIds,
+  index: TabViewIds,
+  value: TabViewIds,
 }
 
-export function tabProps(index: TabConfigIds | TabViewIds) {
+export function tabProps(index: TabViewIds) {
   return {
     id: `tab-${index}`,
     'aria-controls': `tabpanel-${index}`,
@@ -34,8 +25,8 @@ export function AppTabPanel(props: AppTabPanelProps) {
       className={styles.card}
       role="tabpanel"
       hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
       {...other}
     >
       {value === index && (

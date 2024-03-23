@@ -1,17 +1,14 @@
 import * as React from "react";
 import {FieldSettings, FieldSettingsList, FieldType} from "../configuration/FieldConfiguration";
 import {FieldViewListType} from "./FieldView";
-import {Badge, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
-import styles from "../../App.module.css";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+import {Box, Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import ZoomOutMapSharpIcon from "@mui/icons-material/ZoomOutMapSharp";
 import CloseIcon from "@mui/icons-material/Close";
 import {FormView} from "./FormView";
 import {ResponsesTable} from "./ResponsesTable";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
-import {AppTabPanel, tabProps, TabViewIds} from "../common/AppTabPanel";
+import {AppTabs, SingleTabType, TabViewIds} from "../common/AppTabs";
 
 type ViewTabsProps = {
   formStyle: TextFieldVariants,
@@ -23,7 +20,6 @@ function filterFieldsForTable(fieldsSettings: FieldSettingsList): FieldSettingsL
 }
 
 export function ViewTabs(props: ViewTabsProps) {
-  const [selectedTabIndex, setSelectedTabIndex] = React.useState<TabViewIds>(TabViewIds.Preview);
   React.useEffect(() => {
     setTableHeaders([
       '#',
@@ -58,9 +54,8 @@ export function ViewTabs(props: ViewTabsProps) {
     }
   }, [open]);
 
-  const onTabSelected = (event: React.SyntheticEvent, newValue: TabViewIds) => {
-    setSelectedTabIndex(newValue);
-    if (newValue === TabViewIds.Responses) {
+  const onTabSelected = (newValue: TabViewIds) => {
+    if (newValue === TabViewIds.ViewResponses) {
       setNewResponsesCount(0)
     }
   };
@@ -72,23 +67,11 @@ export function ViewTabs(props: ViewTabsProps) {
   const handleClose = () => {
     setOpen(false);
   };
-
-  return (
-    <Box className={styles.card}>
-      <Box sx={{borderBottom: 1, borderColor: 'divider', p: 0}}>
-        <Tabs value={selectedTabIndex} onChange={onTabSelected} aria-label="basic tabs example">
-          <Tab label="Preview" {...tabProps(TabViewIds.Preview)} sx={{textTransform: 'none',}}/>
-
-          <Tab label={
-            <Badge variant="dot" badgeContent={newResponsesCount} color="primary"
-              {...tabProps(TabViewIds.Responses)}
-              sx={{textTransform: 'none',}}>
-              Responses
-            </Badge>}/>
-
-        </Tabs>
-      </Box>
-      <AppTabPanel value={selectedTabIndex} index={TabViewIds.Preview}>
+  const tabsData: SingleTabType<TabViewIds>[] = [
+    {
+      id: TabViewIds.ViewForm,
+      title: 'Preview',
+      content: <>
         <React.Fragment>
           <Box mt={0}
             display="flex"
@@ -144,11 +127,16 @@ export function ViewTabs(props: ViewTabsProps) {
         <FormView formStyle={props.formStyle} fieldsSettings={props.fieldsSettings}
           onSubmit={handleFormSubmit}
         />
-      </AppTabPanel>
-      <AppTabPanel value={selectedTabIndex} index={TabViewIds.Responses}>
-        <ResponsesTable headers={tableHeaders} rows={tableRows}/>
-      </AppTabPanel>
-
-    </Box>
-  );
+      </>
+    },
+    {
+      id: TabViewIds.ViewResponses,
+      title: 'Responses',
+      badgeContent: newResponsesCount,
+      content: <ResponsesTable headers={tableHeaders} rows={tableRows}/>
+    },
+  ]
+  return <>
+    <AppTabs tabsData={tabsData} onTabSelected={onTabSelected}/>
+  </>
 }
