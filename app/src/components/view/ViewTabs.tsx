@@ -5,14 +5,43 @@ import {FormView} from "./FormView";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
 import {AppTabs, SingleTabType, TabViewIds} from "../common/AppTabs";
 import {ZoomableView} from "./ZoomableView";
-import {ResponsesView, ResponsesViewValuesType} from "./ResponsesView";
+import {buildTableRows, ResponsesView, ResponsesViewValuesType} from "./ResponsesView";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import IconButton from "@mui/material/IconButton";
 import {Box} from "@mui/material";
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
 type ViewTabsProps = {
   formStyle: TextFieldVariants,
   fieldsSettings: FieldSettingsList
+}
+
+function buildCsvContent(rows: string[][]): string {
+  const separator: string = ",";
+  return rows.map((row: string[]) => {
+    return row.map((cell: string) => {
+      cell = cell.replace(/"/g, '""');
+
+      if (cell.search(/("|,|\n)/g) >= 0) {
+        cell = `"${cell}"`;
+      }
+      return cell;
+    }).join(separator);
+  }).join('\n');
+}
+
+function downloadCsvFile(csvData: string): void {
+  const CSVFile = new Blob([csvData], {type: "text/csv"});
+  let tempLink = document.createElement('a');
+  tempLink.download = "responses_preview.csv";
+  tempLink.href = window.URL.createObjectURL(CSVFile);
+
+  tempLink.style.display = "none";
+  document.body.appendChild(tempLink);
+
+  tempLink.click();
+  document.body.removeChild(tempLink);
+  tempLink.remove()
 }
 
 export function ViewTabs(props: ViewTabsProps) {
@@ -34,6 +63,11 @@ export function ViewTabs(props: ViewTabsProps) {
 
   function onDeleteClicked(): void {
     setFormValues([])
+  }
+
+  function onCsvClicked() {
+    const rows = buildTableRows(props.fieldsSettings.values, formValues)
+    downloadCsvFile(buildCsvContent(rows));
   }
 
   const tabsData: SingleTabType<TabViewIds>[] = [
@@ -58,6 +92,11 @@ export function ViewTabs(props: ViewTabsProps) {
       content: <>
         <Box display="flex"
           justifyContent="right">
+          <IconButton sx={{
+            m: 0,
+          }} aria-label="see" size="small" onClick={onCsvClicked}>
+            <FileDownloadOutlinedIcon scale={0.5}/>
+          </IconButton>
           <IconButton sx={{
             m: 0,
           }} aria-label="see" size="small" onClick={onDeleteClicked}>

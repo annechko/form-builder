@@ -16,10 +16,11 @@ type ResponsesViewProps = {
   fieldsSettings: FieldSettingsList,
   formValues: ResponsesViewValuesType[]
 }
+// todo move logic
+export function buildTableRows(
+  settings: FieldSettingsListType,
+  values: ResponsesViewValuesType[]): string [][] {
 
-export function ResponsesView(props: ResponsesViewProps) {
-  const settings: FieldSettingsListType = props.fieldsSettings.values
-  const values: ResponsesViewValuesType[] = props.formValues
   let tableHeaders: string[] = ['#']
   let tableRows: string [][] = []
   values.forEach((values: ResponsesViewValuesType, i) => {
@@ -35,6 +36,18 @@ export function ResponsesView(props: ResponsesViewProps) {
       tableRows[vIndex].push(values.values[fieldId])
     })
   })
+  return [
+    tableHeaders,
+    ...tableRows
+  ]
+}
+
+export function ResponsesView(props: ResponsesViewProps) {
+  const settings: FieldSettingsListType = props.fieldsSettings.values
+  const values: ResponsesViewValuesType[] = props.formValues
+  const rows = buildTableRows(settings, values)
+  const tableHeaders: string[] = rows.at(0) as string[]
+  const tableRows: string [][] = rows.splice(1, rows.length)
 
   return <ResponsesTable headers={tableHeaders} rows={tableRows}/>
 }
