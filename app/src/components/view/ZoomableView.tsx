@@ -75,7 +75,6 @@ export function ZoomableView(props: PropsWithChildren<ZoomableViewProps>) {
         </DialogActions>
       </Dialog>
     </React.Fragment>
-    {props.children}
   </>
 
 }

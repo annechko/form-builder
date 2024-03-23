@@ -6,6 +6,9 @@ import {TextFieldVariants} from "@mui/material/TextField/TextField";
 import {AppTabs, SingleTabType, TabViewIds} from "../common/AppTabs";
 import {ZoomableView} from "./ZoomableView";
 import {ResponsesView, ResponsesViewValuesType} from "./ResponsesView";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import IconButton from "@mui/material/IconButton";
+import {Box} from "@mui/material";
 
 type ViewTabsProps = {
   formStyle: TextFieldVariants,
@@ -29,23 +32,43 @@ export function ViewTabs(props: ViewTabsProps) {
     }
   };
 
+  function onDeleteClicked(): void {
+    setFormValues([])
+  }
+
   const tabsData: SingleTabType<TabViewIds>[] = [
     {
       id: TabViewIds.ViewForm,
       title: 'Preview',
-      content: <ZoomableView title="Form Preview">
+      content: <>
+        <ZoomableView title="Form Preview">
+          <FormView formStyle={props.formStyle} fieldsSettings={props.fieldsSettings}
+            onSubmit={handleFormSubmit}
+          />
+        </ZoomableView>
         <FormView formStyle={props.formStyle} fieldsSettings={props.fieldsSettings}
           onSubmit={handleFormSubmit}
         />
-      </ZoomableView>
+      </>
     },
     {
       id: TabViewIds.ViewResponses,
       title: 'Responses',
       badgeContent: newResponsesCount,
-      content: <ZoomableView title="Responses Preview">
+      content: <>
+        <Box display="flex"
+          justifyContent="right">
+          <IconButton sx={{
+            m: 0,
+          }} aria-label="see" size="small" onClick={onDeleteClicked}>
+            <DeleteForeverIcon scale={0.5}/>
+          </IconButton>
+          <ZoomableView title="Responses Preview">
+            <ResponsesView fieldsSettings={props.fieldsSettings} formValues={formValues}/>
+          </ZoomableView>
+        </Box>
         <ResponsesView fieldsSettings={props.fieldsSettings} formValues={formValues}/>
-      </ZoomableView>
+      </>
     },
   ]
   return <>
