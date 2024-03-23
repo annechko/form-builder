@@ -92,12 +92,12 @@ export function ViewTabs(props: ViewTabsProps) {
       content: <>
         <Box display="flex"
           justifyContent="right">
-          <IconButton sx={{
+          <IconButton title="download CSV" sx={{
             m: 0,
           }} aria-label="see" size="small" onClick={onCsvClicked}>
             <FileDownloadOutlinedIcon scale={0.5}/>
           </IconButton>
-          <IconButton sx={{
+          <IconButton title="Remove all rows" sx={{
             m: 0,
           }} aria-label="see" size="small" onClick={onDeleteClicked}>
             <DeleteForeverIcon scale={0.5}/>
