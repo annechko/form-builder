@@ -23,18 +23,18 @@ export type FieldSettings = {
 };
 
 export class FieldSettingsList {
-  constructor(v: FieldSettingsListType = {}) {
-    this._values = {...v}
+  constructor(v: FieldSettings[] = []) {
+    this._values = [...v]
   }
 
-  _values: FieldSettingsListType
+  _values: FieldSettings[]
 
-  get values(): FieldSettingsListType {
+  get values(): FieldSettings[] {
     return this._values;
   }
 
   add(s: FieldSettings): void {
-    this._values[s.id] = s
+    this._values.push(s)
   }
 
   clone(): FieldSettingsList {
@@ -42,40 +42,18 @@ export class FieldSettingsList {
   }
 
   update(id: string, newFieldSettings: FieldSettings) {
-    this._values[id] = newFieldSettings
+    const index = this._values.findIndex((s: FieldSettings) => s.id === id)
+    if (index === -1) {
+      console.log('cannot update settings')
+    } else {
+      this._values[index] = newFieldSettings
+    }
   }
 
   remove(id: string) {
-    delete this._values[id]
+    const other = this._values.filter((s: FieldSettings) => s.id !== id)
+    this._values = [...other]
   }
-
-  map<U>(callback: (s: FieldSettings, id: string) => U): U[] {
-    let newValues: U[] = [];
-    let oValues = this.values;
-    Object.keys(oValues).forEach(function (id: string) {
-      newValues.push(callback(oValues[id], id))
-    });
-    return newValues as U[]
-  }
-
-  reduce(this: FieldSettingsList, callback: (s: FieldSettings, id: string) => boolean): FieldSettingsList {
-    let newList: FieldSettingsListType = {}
-    let oValues = this.values;
-    Object.keys(this.values).forEach(function (id: string) {
-      if (callback(oValues[id], id)) {
-        newList[id] = oValues[id]
-      }
-    });
-    return new FieldSettingsList(newList)
-  }
-
-  length(): number {
-    return Object.keys(this.values).length
-  }
-}
-
-export type FieldSettingsListType = {
-  [id: string]: FieldSettings
 }
 
 const options = [

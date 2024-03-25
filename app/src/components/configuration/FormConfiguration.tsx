@@ -16,8 +16,8 @@ export function FormConfiguration(props: FormConfigurationProps) {
 
   return <>
     <Typography variant="body1" component="div" sx={{mt: 2, minWidth: '30vw'}}>
-      {props.fieldsSettings.map((s: FieldSettings, id: string) => (
-        <div key={id}>
+      {props.fieldsSettings.values.map((s: FieldSettings) => (
+        <div key={s.id}>
           <Box component="section" sx={{
             p: 1,
             pb: 0,
@@ -25,8 +25,8 @@ export function FormConfiguration(props: FormConfigurationProps) {
             mb: 1,
           }}>
             <FieldConfiguration settings={s}
-              onSettingsChanged={props.onFieldSettingsChanged(id)}
-              onFieldDeleted={props.onFieldDeleted(id)}
+              onSettingsChanged={props.onFieldSettingsChanged(s.id)}
+              onFieldDeleted={props.onFieldDeleted(s.id)}
             />
           </Box>
           <Divider/>

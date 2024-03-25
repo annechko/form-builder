@@ -11,10 +11,6 @@ import IconButton from "@mui/material/IconButton";
 import {Box} from "@mui/material";
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
-type ViewTabsProps = {
-  formStyle: TextFieldVariants,
-  fieldsSettings: FieldSettingsList
-}
 
 function buildCsvContent(rows: string[][]): string {
   const separator: string = ",";
@@ -44,6 +40,11 @@ function downloadCsvFile(csvData: string): void {
   tempLink.remove()
 }
 
+type ViewTabsProps = {
+  formStyle: TextFieldVariants,
+  fieldsSettings: FieldSettingsList
+}
+
 export function ViewTabs(props: ViewTabsProps) {
   const [newResponsesCount, setNewResponsesCount] = React.useState<number>(0);
   const [formValues, setFormValues] = React.useState<ResponsesViewValuesType[]>([]);
@@ -66,7 +67,7 @@ export function ViewTabs(props: ViewTabsProps) {
   }
 
   function onCsvClicked() {
-    const rows = buildTableRows(props.fieldsSettings.values, formValues)
+    const rows = buildTableRows(props.fieldsSettings, formValues)
     downloadCsvFile(buildCsvContent(rows));
   }
 

@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-  FieldSettingsList,
-  FieldSettingsListType,
-  FieldType
-} from "../configuration/FieldConfiguration";
+import {FieldSettings, FieldSettingsList, FieldType} from "../configuration/FieldConfiguration";
 import {ResponsesTable} from "./ResponsesTable";
 import {FieldViewListType} from "./FieldView";
 
@@ -12,14 +8,11 @@ export type ResponsesViewValuesType = {
   values: FieldViewListType
 }
 
-type ResponsesViewProps = {
-  fieldsSettings: FieldSettingsList,
-  formValues: ResponsesViewValuesType[]
-}
 // todo move logic
 export function buildTableRows(
-  settings: FieldSettingsListType,
-  values: ResponsesViewValuesType[]): string [][] {
+  settings: FieldSettingsList,
+  values: ResponsesViewValuesType[]
+): string [][] {
 
   let tableHeaders: string[] = ['#']
   let tableRows: string [][] = []
@@ -27,11 +20,12 @@ export function buildTableRows(
     tableRows[i] = [values.date]
   })
 
-  Object.keys(settings).forEach((fieldId: string) => {
-    if (settings[fieldId].type === FieldType.title) {
+  settings.values.forEach((fieldSettings: FieldSettings, fIndex: number) => {
+    if (fieldSettings.type === FieldType.title) {
       return;
     }
-    tableHeaders.push(settings[fieldId].label || '')
+    const fieldId = fieldSettings.id
+    tableHeaders.push(fieldSettings.label || '')
     values.forEach((values: ResponsesViewValuesType, vIndex: number) => {
       tableRows[vIndex].push(values.values[fieldId])
     })
@@ -42,8 +36,13 @@ export function buildTableRows(
   ]
 }
 
+type ResponsesViewProps = {
+  fieldsSettings: FieldSettingsList,
+  formValues: ResponsesViewValuesType[]
+}
+
 export function ResponsesView(props: ResponsesViewProps) {
-  const settings: FieldSettingsListType = props.fieldsSettings.values
+  const settings: FieldSettingsList = props.fieldsSettings
   const values: ResponsesViewValuesType[] = props.formValues
   const rows = buildTableRows(settings, values)
   const tableHeaders: string[] = rows.at(0) as string[]

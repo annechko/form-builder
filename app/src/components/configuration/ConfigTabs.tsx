@@ -17,7 +17,7 @@ export function ConfigTabs(props: ConfigTabsProps) {
     return {id: nanoid(), type: FieldType.input, label: 'Field'};
   }
 
-  let defaultFieldsSettings: FieldSettingsList = new FieldSettingsList({})
+  let defaultFieldsSettings: FieldSettingsList = new FieldSettingsList()
   defaultFieldsSettings.add({id: nanoid(), type: FieldType.title, label: 'New Form Title'})
   defaultFieldsSettings.add(defaultSettings())
 

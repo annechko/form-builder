@@ -20,12 +20,12 @@ export function FormView(props: FormViewProps) {
     fieldValues: FieldViewListType,
     fieldsSettings: FieldSettingsList): FieldsValueErrors {
     let _errors: FieldsValueErrors = {};
-    fieldsSettings.map((settings: FieldSettings, id: string) => {
-      if (settings.type === FieldType.title) {
+    fieldsSettings.values.forEach((s: FieldSettings) => {
+      if (s.type === FieldType.title) {
         return;
       }
-      if (settings.isRequired && (fieldValues[id] === '' || fieldValues[id] === undefined)) {
-        _errors[id] = {message: 'Required field'}
+      if (s.isRequired && (fieldValues[s.id] === '' || fieldValues[s.id] === undefined)) {
+        _errors[s.id] = {message: 'Required field'}
       }
     })
 
@@ -57,12 +57,12 @@ export function FormView(props: FormViewProps) {
     >
       <form style={{minWidth: "30vw"}}>
         <Typography variant="body1" component="div">
-          {props.fieldsSettings.map((s: FieldSettings, id: string) => (
-            <div key={id}>
+          {props.fieldsSettings.values.map((s: FieldSettings) => (
+            <div key={s.id}>
               <Box component="section" sx={{pr: 0, pl: 0}}>
-                <FieldView settings={s} onChange={onFieldValueChange(id)} value={fieldValues[id]}
+                <FieldView settings={s} onChange={onFieldValueChange(s.id)} value={fieldValues[s.id]}
                   variant={props.formStyle}
-                  error={errors[id]}/>
+                  error={errors[s.id]}/>
               </Box>
             </div>
           ))}
@@ -73,7 +73,7 @@ export function FormView(props: FormViewProps) {
           justifyContent="center"
         >
           <Button variant="contained" onClick={onSubmitResponse}
-            disabled={props.fieldsSettings.length() === 0}>Test Submit</Button>
+            disabled={props.fieldsSettings.values.length === 0}>Test Submit</Button>
 
         </Box>
       </form>
