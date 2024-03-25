@@ -34,6 +34,9 @@ export function ConfigTabs(props: ConfigTabsProps) {
     fieldsSettings.add(defaultSettings())
     updateSettings(fieldsSettings)
   }
+  const onFieldSettingsListChanged = (newSettings: FieldSettingsList) => {
+    updateSettings(newSettings)
+  }
   const onFieldSettingsChanged = (id: string) => {
     return (newFieldSettings: FieldSettings) => {
       fieldsSettings.update(id, newFieldSettings)
@@ -53,6 +56,7 @@ export function ConfigTabs(props: ConfigTabsProps) {
       title: 'Configure',
       content: <FormConfiguration
         fieldsSettings={fieldsSettings}
+        onFieldSettingsListChanged={onFieldSettingsListChanged}
         onFieldAdded={onFieldAdded}
         onFieldDeleted={onFieldDeleted}
         onFieldSettingsChanged={onFieldSettingsChanged}
