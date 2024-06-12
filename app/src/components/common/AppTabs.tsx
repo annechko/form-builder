@@ -16,10 +16,10 @@ export enum TabConfigIds {
 }
 
 export type AppTabsProps<TabTypeId extends number> = {
-  tabsData: SingleTabType<TabTypeId>[],
+  tabsData: SingleTab<TabTypeId>[],
   onTabSelected?: (id: TabTypeId) => void
 }
-export type SingleTabType<TabTypeId extends number> = {
+export type SingleTab<TabTypeId extends number> = {
   id: TabTypeId,
   title: string,
   content: React.JSX.Element,
@@ -40,7 +40,7 @@ export function AppTabs<TabTypeId extends number>(props: AppTabsProps<TabTypeId>
     <Box className={styles.card}>
       <Box sx={{borderBottom: 1, borderColor: 'divider', p: 0}}>
         <Tabs value={selectedTabId} onChange={onTabSelected} aria-label="tabs configuration">
-          {props.tabsData.map((tabData: SingleTabType<TabTypeId>) => {
+          {props.tabsData.map((tabData: SingleTab<TabTypeId>) => {
               if (tabData?.badgeContent !== undefined) {
                 return <Tab key={tabData.id as number} label={
                   <Badge variant="dot" badgeContent={tabData?.badgeContent} color="primary"
@@ -57,7 +57,7 @@ export function AppTabs<TabTypeId extends number>(props: AppTabsProps<TabTypeId>
         </Tabs>
       </Box>
 
-      {props.tabsData.map((tabData: SingleTabType<TabTypeId>) =>
+      {props.tabsData.map((tabData: SingleTab<TabTypeId>) =>
         <AppTabPanel key={tabData.id as number} value={selectedTabId as number} index={tabData.id as number}>
           {tabData.content}
         </AppTabPanel>

@@ -4,20 +4,19 @@ import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
 
-export type FieldViewListType = {
+export type FieldViewList = {
   [id: string]: string
 }
 
 export const FieldViewStyles = ['outlined', 'standard', 'filled']
-export type FieldViewProps = {
+
+export function FieldView(props: {
   settings: FieldSettings,
   onChange?: (event?: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   value?: string,
   variant?: TextFieldVariants,
   error?: { message: string },
-};
-
-export function FieldView(props: FieldViewProps) {
+}) {
   const settings = props.settings
   const [value, setValue] = React.useState<string>(props.value || '');
   const [error, setError] = React.useState<string | undefined>(props.error?.message);

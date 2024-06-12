@@ -3,7 +3,7 @@ import {FormConfiguration} from "./FormConfiguration";
 import {FormSettings} from "./FormSettings";
 import {FieldSettings, FieldSettingsList, FieldType} from "./FieldConfiguration";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
-import {AppTabs, SingleTabType, TabConfigIds} from "../common/AppTabs";
+import {AppTabs, SingleTab, TabConfigIds} from "../common/AppTabs";
 import {nanoid} from "nanoid";
 
 type ConfigTabsProps = {
@@ -50,7 +50,7 @@ export function ConfigTabs(props: ConfigTabsProps) {
     }
   }
 
-  const tabsData: SingleTabType<TabConfigIds>[] = [
+  const tabsData: SingleTab<TabConfigIds>[] = [
     {
       id: TabConfigIds.ConfigForm,
       title: 'Configure',

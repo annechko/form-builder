@@ -2,22 +2,22 @@ import * as React from "react";
 import {FieldSettings, FieldSettingsList, FieldType} from "../configuration/FieldConfiguration";
 import {Box, Button} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {FieldView, FieldViewListType} from "./FieldView";
+import {FieldView, FieldViewList} from "./FieldView";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
 
 type FormViewProps = {
   formStyle: TextFieldVariants,
   fieldsSettings: FieldSettingsList,
-  onSubmit: (fieldValues: FieldViewListType) => void;
+  onSubmit: (fieldValues: FieldViewList) => void;
 }
 export type FieldsValueErrors = { [index: string]: { message: string } }
 
 export function FormView(props: FormViewProps) {
-  const [fieldValues, setFieldValues] = React.useState<FieldViewListType>({});
+  const [fieldValues, setFieldValues] = React.useState<FieldViewList>({});
   const [errors, setErrors] = React.useState<FieldsValueErrors>({});
 
   function validateValues(
-    fieldValues: FieldViewListType,
+    fieldValues: FieldViewList,
     fieldsSettings: FieldSettingsList): FieldsValueErrors {
     let _errors: FieldsValueErrors = {};
     fieldsSettings.values.forEach((s: FieldSettings) => {

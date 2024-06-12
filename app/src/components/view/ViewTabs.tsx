@@ -1,11 +1,11 @@
 import * as React from "react";
 import {FieldSettingsList} from "../configuration/FieldConfiguration";
-import {FieldViewListType} from "./FieldView";
+import {FieldViewList} from "./FieldView";
 import {FormView} from "./FormView";
 import {TextFieldVariants} from "@mui/material/TextField/TextField";
-import {AppTabs, SingleTabType, TabViewIds} from "../common/AppTabs";
+import {AppTabs, SingleTab, TabViewIds} from "../common/AppTabs";
 import {ZoomableView} from "./ZoomableView";
-import {buildTableRows, ResponsesView, ResponsesViewValuesType} from "./ResponsesView";
+import {buildTableRows, ResponsesView, ResponsesViewValues} from "./ResponsesView";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import IconButton from "@mui/material/IconButton";
 import {Box} from "@mui/material";
@@ -47,10 +47,10 @@ type ViewTabsProps = {
 
 export function ViewTabs(props: ViewTabsProps) {
   const [newResponsesCount, setNewResponsesCount] = React.useState<number>(0);
-  const [formValues, setFormValues] = React.useState<ResponsesViewValuesType[]>([]);
+  const [formValues, setFormValues] = React.useState<ResponsesViewValues[]>([]);
 
-  function handleFormSubmit(newValues: FieldViewListType): void {
-    const v: ResponsesViewValuesType = {date: new Date().toLocaleString(), values: newValues}
+  function handleFormSubmit(newValues: FieldViewList): void {
+    const v: ResponsesViewValues = {date: new Date().toLocaleString(), values: newValues}
     formValues.push(v)
     setFormValues([...formValues])
     setNewResponsesCount(newResponsesCount + 1)
@@ -71,7 +71,7 @@ export function ViewTabs(props: ViewTabsProps) {
     downloadCsvFile(buildCsvContent(rows));
   }
 
-  const tabsData: SingleTabType<TabViewIds>[] = [
+  const tabsData: SingleTab<TabViewIds>[] = [
     {
       id: TabViewIds.ViewForm,
       title: 'Preview',
